@@ -1,0 +1,38 @@
+---
+description: Usa el MCP user-atlassian para Jira, Confluence y Compass (Atlassian Cloud)
+alwaysApply: true
+---
+
+# Atlassian MCP (`user-atlassian`)
+
+- Usa el servidor MCP `user-atlassian` cuando la tarea implique tickets, búsquedas JQL, páginas de Confluence, comentarios, transiciones o datos de Compass. No inventes estado de issues: obtén datos con las herramientas MCP o indica que no hay acceso.
+- Las acciones respetan los permisos del usuario conectado (OAuth / token). No asumas acceso a proyectos o espacios que el usuario no haya mencionado.
+
+## Valores por defecto (Multiplica)
+
+- **cloudId:** `https://multiplica.atlassian.net` (URL del sitio; no hace falta UUID si la herramienta acepta la URL).
+- **Proyecto Agentic Experience (referencia):** clave `IAI0016` — úsala cuando el contexto sea este producto; si el usuario nombra otro proyecto, usa esa clave.
+
+Para **no** gastar llamadas de descubrimiento innecesarias: si ya conoces `cloudId` y proyecto, no llames herramientas solo para listar recursos accesibles salvo que el usuario lo pida.
+
+## Jira — patrones habituales
+
+- **Leer un issue:** `getJiraIssue` con `cloudId` + `issueIdOrKey` (ej. `IAI0016-227`). Opcional: `responseContentFormat`: `markdown` o `adf`.
+- **Buscar:** `searchJiraIssuesUsingJql` con JQL acotado. Usa `maxResults` **≤ 10** salvo que el usuario pida más resultados explícitamente.
+- **Crear / editar / transiciones / comentarios / worklog:** usa las herramientas correspondientes (`createJiraIssue`, `editJiraIssue`, `transitionJiraIssue`, `addCommentToJiraIssue`, etc.) solo tras confirmar criterios (proyecto, tipo, resumen) si la acción es destructiva o visible para el equipo.
+
+## Confluence
+
+- Búsquedas con CQL: limita resultados (p. ej. `limit: 10`) como en Jira.
+- Lectura/creación/actualización de páginas según la herramienta indicada en el MCP; no pegues credenciales en prompts.
+
+## Seguridad y buenas prácticas
+
+- No incluyas en consultas a herramientas datos sensibles que no hagan falta (contraseñas, secretos de repo, PII innecesaria).
+- Para cambios de alto impacto (cerrar tickets masivos, borrado, reasignaciones masivas), pide confirmación explícita al usuario.
+- Si la API devuelve error de permisos, IP o autorización de admin, resume el mensaje y sugiere revisar políticas de la org o OAuth.
+
+## Documentación
+
+- Resumen local: `jira.md` en la raíz del repo.
+- Repositorio oficial: [atlassian/atlassian-mcp-server](https://github.com/atlassian/atlassian-mcp-server).

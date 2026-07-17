@@ -1,0 +1,31 @@
+description: Usa el MCP user-Figma para leer diseños y assets desde URLs de Figma
+alwaysApply: true
+---
+
+# Figma MCP
+
+- Usa siempre el servidor MCP `user-Figma` para leer diseños. No uses `plugin-figma-figma` para obtener datos del archivo.
+- Usa esta rule solo cuando la tarea involucre una URL de Figma, implementación desde diseño, extracción de assets o revisión de nodos/componentes.
+- Herramientas disponibles: `get_figma_data`, `download_figma_images`.
+- Si la URL incluye `node-id`, conviértelo al formato con `:` antes de llamar la API: `1933-20345` -> `1933:20345`.
+- El `fileKey` es el segmento entre `/design/` y la siguiente `/`. Debe mantenerse exactamente igual, respetando mayúsculas y minúsculas.
+- En `get_figma_data`, incluye `nodeId` siempre que venga en la URL. No uses `depth` salvo que el usuario lo pida explícitamente.
+- Si la API devuelve `404`, asume primero que el token no tiene acceso al archivo o que el `fileKey` es incorrecto; no inventes estructura del diseño como si proviniera de Figma.
+- Para assets o iconos, usa `download_figma_images` con `fileKey`, `nodes` y `localPath` absoluto.
+- Si no puedes leer el archivo desde Figma, explica el error real y luego ofrece continuar replicando el diseño manualmente a partir del contexto disponible.
+
+## Ejemplo
+
+URL:
+`https://www.figma.com/design/WeSoVlZoMshWFAYIJFDd7Q/Agentic-XP?node-id=1933-20345`
+
+Parámetros:
+`fileKey: "WeSoVlZoMshWFAYIJFDd7Q"`
+`nodeId: "1933:20345"`
+
+## Flujo esperado
+
+1. Extraer `fileKey` y `nodeId` desde la URL.
+2. Llamar `get_figma_data`.
+3. Si hay imágenes o SVGs necesarios, usar `download_figma_images`.
+4. Adaptar el resultado al stack real del proyecto.

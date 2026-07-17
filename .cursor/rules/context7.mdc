@@ -1,0 +1,29 @@
+---
+description: Usa Context7 para documentación actualizada de librerías y APIs
+alwaysApply: true
+---
+
+# Context7 MCP
+
+- Usa `Context7` cuando la tarea requiera documentación externa actualizada, ejemplos reales, pasos de instalación, configuración, migraciones o uso de APIs de librerías/frameworks.
+- No uses `Context7` para responder preguntas que dependan solo del código local del repositorio.
+- Si el usuario ya indica un library ID con formato `/org/project` o `/org/project/version`, úsalo directamente.
+- Si no lo indica, primero resuelve la librería con `resolve-library-id` y luego consulta la documentación con `query-docs`.
+- No llames `resolve-library-id` más de 3 veces por consulta. Si hay varias coincidencias válidas, elige la más oficial y relevante.
+- Prioriza documentación oficial, buena reputación de fuente, cobertura de snippets y coincidencia con la versión solicitada por el usuario.
+- Si el usuario menciona versión, inclúyela en la búsqueda o usa el library ID versionado.
+- Resume lo encontrado y adapta los ejemplos al stack real del proyecto; no copies respuestas de documentación sin contextualizarlas.
+
+## Cuándo usarlo
+
+- "Cómo se configura X"
+- "Genera código usando Y"
+- "Cuál es la API actual de Z"
+- "Muéstrame un ejemplo con la versión N"
+
+## Flujo esperado
+
+1. Identificar la librería o framework.
+2. Ejecutar `resolve-library-id` si hace falta.
+3. Ejecutar `query-docs` con una consulta concreta.
+4. Aplicar la respuesta al contexto del proyecto.
