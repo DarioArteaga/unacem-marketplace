@@ -16,6 +16,10 @@ Campos obligatorios: `titulo`, `champion`, `area`, `resumen`, `tags`. Un error d
 
 El cuerpo se renderiza con `next-mdx-remote/rsc`. Los bloques `mermaid` se delegan a un client component que importa `mermaid` de forma dinámica (lazy) y aplica la paleta de marca. Errores de sintaxis muestran un mensaje discreto sin romper la página.
 
+## Navegación por champion
+
+La home muestra primero un índice de cards por champion (nombre, área, cantidad de casos). Al elegir uno, se listan sus casos. El filtro por tags aplica en ambos niveles. No hay ruta `/champions/[slug]`: es estado de UI en el cliente (`CasoGrid`).
+
 ## Tags temáticos y de estado
 
 Los casos llevan tags en el front-matter. Además de temas (`impuestos`, `automatización`, etc.), se admite el tag de estado `enproceso` para casos aún en desarrollo (intake sin solución documentada). En UI se muestra como "En proceso" y se estiliza distinto. Al cerrar el case study, se elimina `enproceso` del array. Definición en `src/lib/tags.ts`.

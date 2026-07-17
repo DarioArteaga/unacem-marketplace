@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CasoCard } from "@/components/CasoCard";
+import { ChampionCard } from "@/components/ChampionCard";
 import { TagFilter } from "@/components/TagFilter";
 import type { CasoCardData } from "@/lib/schema";
 
@@ -42,6 +43,7 @@ function groupByChampion(casos: CasoCardData[]): ChampionGroup[] {
 
 export function CasoGrid({ casos, tags }: CasoGridProps): React.ReactElement {
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [selectedChampion, setSelectedChampion] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     if (!activeTag) {
@@ -52,48 +54,78 @@ export function CasoGrid({ casos, tags }: CasoGridProps): React.ReactElement {
 
   const groups = useMemo(() => groupByChampion(filtered), [filtered]);
 
+  const activeGroup = useMemo(
+    () => groups.find((group) => group.champion === selectedChampion) ?? null,
+    [groups, selectedChampion],
+  );
+
+  function handleTagChange(tag: string | null): void {
+    setActiveTag(tag);
+  }
+
+  function handleBackToChampions(): void {
+    setSelectedChampion(null);
+  }
+
+  const showingCases = selectedChampion !== null;
+
   return (
     <section aria-labelledby="casos-heading" className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 id="casos-heading" className="font-serif text-2xl font-semibold text-brand">
-            Casos de uso
+            {showingCases && activeGroup ? activeGroup.champion : "Champions"}
           </h2>
           <p className="mt-1 text-sm text-ink-muted">
-            Agrupados por champion. Filtra por área o tema para encontrar algo cercano a tu
-            trabajo.
+            {showingCases && activeGroup
+              ? activeGroup.areas.join(" · ")
+              : "Elige un champion para ver sus casos. También puedes filtrar por área o tema."}
           </p>
         </div>
-        <TagFilter tags={tags} activeTag={activeTag} onChange={setActiveTag} />
+        <TagFilter tags={tags} activeTag={activeTag} onChange={handleTagChange} />
       </div>
 
-      {groups.length === 0 ? (
+      {showingCases ? (
+        <div className="space-y-4">
+          <button
+            type="button"
+            onClick={handleBackToChampions}
+            className="inline-flex text-sm font-medium text-brand outline-none transition hover:text-brand-accent focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2"
+          >
+            ← Volver a champions
+          </button>
+
+          {!activeGroup || activeGroup.casos.length === 0 ? (
+            <p className="rounded-xl bg-white px-4 py-8 text-center text-ink-muted ring-1 ring-ink-muted/10">
+              Este champion no tiene casos con esa etiqueta.
+            </p>
+          ) : (
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {activeGroup.casos.map((caso) => (
+                <li key={caso.slug}>
+                  <CasoCard caso={caso} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ) : groups.length === 0 ? (
         <p className="rounded-xl bg-white px-4 py-8 text-center text-ink-muted ring-1 ring-ink-muted/10">
           No hay casos con esa etiqueta.
         </p>
       ) : (
-        <div className="space-y-10">
-          {groups.map((group) => {
-            const headingId = `champion-${group.champion.toLowerCase().replace(/\s+/g, "-")}`;
-            return (
-              <section key={group.champion} aria-labelledby={headingId} className="space-y-4">
-                <div className="border-b border-ink-muted/15 pb-3">
-                  <h3 id={headingId} className="font-serif text-xl font-semibold text-ink">
-                    {group.champion}
-                  </h3>
-                  <p className="mt-0.5 text-sm text-ink-muted">{group.areas.join(" · ")}</p>
-                </div>
-                <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {group.casos.map((caso) => (
-                    <li key={caso.slug}>
-                      <CasoCard caso={caso} />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
-          })}
-        </div>
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {groups.map((group) => (
+            <li key={group.champion}>
+              <ChampionCard
+                champion={group.champion}
+                areas={group.areas}
+                caseCount={group.casos.length}
+                onSelect={() => setSelectedChampion(group.champion)}
+              />
+            </li>
+          ))}
+        </ul>
       )}
     </section>
   );

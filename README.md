@@ -144,7 +144,7 @@ docs/                   ← changelog y decisiones técnicas
 
 | Ruta | Qué hace |
 |---|---|
-| `/` | Hero + casos agrupados por champion + filtro por tags |
+| `/` | Hero + cards de champion → casos del champion + filtro por tags |
 | `/casos/[slug]` | Mini case study con diagrama |
 
 ## Comandos útiles

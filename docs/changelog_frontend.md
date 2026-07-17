@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-07-17] [FEAT] Home con cards de champion como índice; al seleccionar se listan sus casos (filtro por tags se mantiene).
+  Archivos modificados: src/components/ChampionCard.tsx, src/components/CasoGrid.tsx, docs/changelog_frontend.md, README.md
+
 - [2026-07-17] [FEAT] Home agrupa casos por champion; el filtro por tags se mantiene dentro de esos grupos.
   Archivos modificados: src/components/CasoGrid.tsx, docs/changelog_frontend.md
 
