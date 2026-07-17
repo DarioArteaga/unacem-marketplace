@@ -4,7 +4,9 @@ import { useMemo, useState } from "react";
 import { CasoCard } from "@/components/CasoCard";
 import { ChampionCard } from "@/components/ChampionCard";
 import { TagFilter } from "@/components/TagFilter";
+import { resolveEstado } from "@/lib/estado";
 import type { CasoCardData } from "@/lib/schema";
+import { isEstadoFilterChip } from "@/lib/tags";
 
 type CasoGridProps = {
   casos: CasoCardData[];
@@ -48,6 +50,11 @@ export function CasoGrid({ casos, tags }: CasoGridProps): React.ReactElement {
   const filtered = useMemo(() => {
     if (!activeTag) {
       return casos;
+    }
+    if (isEstadoFilterChip(activeTag)) {
+      return casos.filter(
+        (caso) => resolveEstado(caso.estado, caso.tags) === "enproceso",
+      );
     }
     return casos.filter((caso) => caso.tags.includes(activeTag));
   }, [activeTag, casos]);

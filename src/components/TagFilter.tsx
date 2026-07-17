@@ -1,6 +1,6 @@
 "use client";
 
-import { formatTagLabel, isStatusTag } from "@/lib/tags";
+import { formatFilterLabel, isEstadoFilterChip } from "@/lib/tags";
 
 type TagFilterProps = {
   tags: string[];
@@ -22,18 +22,6 @@ function chipClass(isActive: boolean, status: boolean): string {
 }
 
 export function TagFilter({ tags, activeTag, onChange }: TagFilterProps): React.ReactElement {
-  const ordered = [...tags].sort((a, b) => {
-    const aStatus = isStatusTag(a);
-    const bStatus = isStatusTag(b);
-    if (aStatus && !bStatus) {
-      return -1;
-    }
-    if (!aStatus && bStatus) {
-      return 1;
-    }
-    return formatTagLabel(a).localeCompare(formatTagLabel(b), "es");
-  });
-
   return (
     <div
       className="flex flex-wrap gap-2"
@@ -48,9 +36,9 @@ export function TagFilter({ tags, activeTag, onChange }: TagFilterProps): React.
       >
         Todos
       </button>
-      {ordered.map((tag) => {
+      {tags.map((tag) => {
         const isActive = activeTag === tag;
-        const status = isStatusTag(tag);
+        const status = isEstadoFilterChip(tag);
         return (
           <button
             key={tag}
@@ -59,7 +47,7 @@ export function TagFilter({ tags, activeTag, onChange }: TagFilterProps): React.
             className={chipClass(isActive, status)}
             aria-pressed={isActive}
           >
-            {formatTagLabel(tag)}
+            {formatFilterLabel(tag)}
           </button>
         );
       })}

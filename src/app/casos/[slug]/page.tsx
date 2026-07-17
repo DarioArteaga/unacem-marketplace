@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { EstadoBadge } from "@/components/EstadoBadge";
 import { MdxContent } from "@/components/MdxContent";
 import { TagBadge } from "@/components/TagBadge";
 import { getAllCasos, getCasoBySlug } from "@/lib/casos";
+import { resolveEstado } from "@/lib/estado";
 import { sortTagsForDisplay } from "@/lib/tags";
 
 type CasoPageProps = {
@@ -36,6 +38,8 @@ export default async function CasoPage({ params }: CasoPageProps): Promise<React
     notFound();
   }
 
+  const estado = resolveEstado(caso.estado, caso.tags);
+
   return (
     <article className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <Link
@@ -47,6 +51,7 @@ export default async function CasoPage({ params }: CasoPageProps): Promise<React
 
       <header className="mb-10 border-b border-ink-muted/15 pb-8">
         <div className="mb-4 flex flex-wrap items-center gap-2">
+          <EstadoBadge estado={estado} />
           {caso.herramienta ? (
             <span className="rounded-md bg-surface px-2 py-1 text-xs font-medium text-ink-muted ring-1 ring-ink-muted/15">
               {caso.herramienta}

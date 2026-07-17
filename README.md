@@ -62,69 +62,59 @@ champion: "Nombre de la persona o equipo"
 area: "Área, país o unidad"
 resumen: "Una línea que aparece en la tarjeta (máximo 140 caracteres)"
 herramienta: "Claude"
-tags: ["enproceso", "finanzas", "automatización"]
+estado: "enproceso"
+tags: ["finanzas", "automatización"]
 orden: 4
 fecha: "2026-07-16"
 ---
 ```
 
 **Obligatorios:** `titulo`, `champion`, `area`, `resumen`, `tags`.  
-**Opcionales:** `herramienta`, `orden`, `fecha`.
+**Opcionales:** `herramienta`, `estado`, `orden`, `fecha`.
 
 - Si falta un campo obligatorio, `npm run build` falla e indica el archivo y el campo.
 - `orden` controla la posición en el grid (menor número = primero). Si no hay `orden`, se ordena por `fecha` (más reciente primero).
 
+### Estado y tags
 
+| Campo | Valores | Uso |
+|---|---|---|
+| `estado` | `enproceso` o `publicado` | Madurez del caso. `enproceso` muestra el badge **En proceso**. Si omites el campo, se trata como publicado. |
+| `tags` | solo temas, ej. `impuestos` | Filtro temático. **No** pongas el estado aquí. |
 
-### Tags: temáticos y de estado
-
-Los `tags` van en minúsculas, sin espacios. Hay dos tipos:
-
-
-| Tipo         | Ejemplo                                   | Uso                                                                                              |
-| ------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **Estado**   | `enproceso`                               | Caso aún en desarrollo (sin solución/impacto cerrados). En la UI se muestra como **En proceso**. |
-| **Temático** | `impuestos`, `automatización`, `finanzas` | Área o tema para filtrar.                                                                        |
-
-
-Convención recomendada:
-
-1. Si el caso es borrador / en desarrollo, incluye siempre `enproceso` como primer tag de estado.
-2. Suma 2–4 tags temáticos.
-3. Cuando el caso esté listo para publicarse como case study cerrado, **quita** `enproceso` (no lo dejes).
-
-El filtro de la home usa todos los tags; `enproceso` aparece primero y con estilo distinto (badge rojo).
+Cuando el case study esté cerrado: `estado: "publicado"` (o quita el campo).
 
 ### Paso 3 — Escribir el cuerpo
 
-Se recomienda esta estructura (lenguaje simple, sin jerga técnica):
+Estructura del formatter actual (el sitio renderiza cualquier Markdown; esta es la convención):
 
 ```markdown
 ## El problema
 ...
 
-## Cómo se resolvió
+## Cómo se hace hoy
 ...
+
+## El caso en datos
+
+| | |
+|---|---|
+| Qué lo dispara | ... |
+| Qué necesita | ... |
+| Qué entrega | ... |
+| Herramientas de siempre | ... |
+
+## Qué se está construyendo
+...
+(o ## Cómo se resolvió / ## El impacto cuando el caso ya está cerrado)
 
 ## El flujo
 
-(Abre un bloque de código con lenguaje mermaid y escribe el diagrama; cierra el bloque.)
+(bloque mermaid)
 
-## El impacto
+## Qué se espera lograr
 ...
 ```
-
-Ejemplo de bloque Mermaid dentro del `.md`:
-
-```markdown
-```mermaid
-flowchart LR
-    A[Inicio] --> B[Paso intermedio]
-    B --> C[Resultado]
-```
-```
-
-
 
 ### Paso 4 — Diagramas Mermaid
 

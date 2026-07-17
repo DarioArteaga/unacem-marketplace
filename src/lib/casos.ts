@@ -86,12 +86,4 @@ export function getCasoBySlug(slug: string): Caso | undefined {
   return getAllCasos().find((caso) => caso.slug === slug);
 }
 
-export function getAllTags(casos: Caso[]): string[] {
-  const tags = new Set<string>();
-  for (const caso of casos) {
-    for (const tag of caso.tags) {
-      tags.add(tag);
-    }
-  }
-  return Array.from(tags).sort((a, b) => a.localeCompare(b, "es"));
-}
+export { getFilterChips as getAllTags } from "@/lib/tags";

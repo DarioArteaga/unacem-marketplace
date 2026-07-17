@@ -1,31 +1,43 @@
-const STATUS_TAG_EN_PROCESO = "enproceso";
+import type { Caso } from "@/lib/schema";
+import { resolveEstado } from "@/lib/estado";
 
-/** Tags de estado conocidos (madurez del caso en el marketplace). */
-export const STATUS_TAGS: readonly string[] = [STATUS_TAG_EN_PROCESO];
+const LEGACY_STATUS_TAG = "enproceso";
 
-export function isStatusTag(tag: string): boolean {
-  return STATUS_TAGS.includes(tag);
+/** Tags temáticos para chips (excluye el tag de estado legado). */
+export function getThematicTags(casos: Caso[]): string[] {
+  const tags = new Set<string>();
+  for (const caso of casos) {
+    for (const tag of caso.tags) {
+      if (tag !== LEGACY_STATUS_TAG) {
+        tags.add(tag);
+      }
+    }
+  }
+  return Array.from(tags).sort((a, b) => a.localeCompare(b, "es"));
 }
 
-/** Etiqueta legible para UI (el valor en el .md sigue en minúsculas sin espacios). */
-export function formatTagLabel(tag: string): string {
-  if (tag === STATUS_TAG_EN_PROCESO) {
+/** Chips de filtro: "enproceso" primero si hay casos en ese estado, luego tags. */
+export function getFilterChips(casos: Caso[]): string[] {
+  const thematic = getThematicTags(casos);
+  const hasEnProceso = casos.some(
+    (caso) => resolveEstado(caso.estado, caso.tags) === "enproceso",
+  );
+  return hasEnProceso ? [LEGACY_STATUS_TAG, ...thematic] : thematic;
+}
+
+export function formatFilterLabel(chip: string): string {
+  if (chip === LEGACY_STATUS_TAG) {
     return "En proceso";
   }
-  return tag;
+  return chip;
 }
 
-/** Estado primero, luego tags temáticos en orden alfabético. */
+export function isEstadoFilterChip(chip: string): boolean {
+  return chip === LEGACY_STATUS_TAG;
+}
+
 export function sortTagsForDisplay(tags: string[]): string[] {
-  return [...tags].sort((a, b) => {
-    const aStatus = isStatusTag(a);
-    const bStatus = isStatusTag(b);
-    if (aStatus && !bStatus) {
-      return -1;
-    }
-    if (!aStatus && bStatus) {
-      return 1;
-    }
-    return formatTagLabel(a).localeCompare(formatTagLabel(b), "es");
-  });
+  return [...tags]
+    .filter((tag) => tag !== LEGACY_STATUS_TAG)
+    .sort((a, b) => a.localeCompare(b, "es"));
 }

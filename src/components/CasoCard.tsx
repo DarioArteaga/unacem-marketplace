@@ -3,8 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
+import { EstadoBadge } from "@/components/EstadoBadge";
 import { TagBadge } from "@/components/TagBadge";
 import { UnacemLoader } from "@/components/UnacemLoader";
+import { resolveEstado } from "@/lib/estado";
 import type { CasoCardData } from "@/lib/schema";
 import { sortTagsForDisplay } from "@/lib/tags";
 
@@ -16,6 +18,7 @@ export function CasoCard({ caso }: CasoCardProps): React.ReactElement {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const estado = resolveEstado(caso.estado, caso.tags);
 
   useEffect(() => {
     setMounted(true);
@@ -69,6 +72,11 @@ export function CasoCard({ caso }: CasoCardProps): React.ReactElement {
           <span className="text-ink-muted"> · {caso.area}</span>
         </p>
         <ul className="flex flex-wrap gap-2" aria-label="Etiquetas">
+          {estado === "enproceso" ? (
+            <li>
+              <EstadoBadge estado={estado} interactive />
+            </li>
+          ) : null}
           {sortTagsForDisplay(caso.tags).map((tag) => (
             <li key={tag}>
               <TagBadge tag={tag} interactive />

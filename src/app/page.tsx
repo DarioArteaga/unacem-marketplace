@@ -1,10 +1,11 @@
 import { CasoGrid } from "@/components/CasoGrid";
-import { getAllCasos, getAllTags } from "@/lib/casos";
+import { getAllCasos } from "@/lib/casos";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
+import { getFilterChips } from "@/lib/tags";
 
 export default function HomePage(): React.ReactElement {
   const casos = getAllCasos();
-  const tags = getAllTags(casos);
+  const tags = getFilterChips(casos);
   const cardCasos = casos.map((caso) => ({
     slug: caso.slug,
     titulo: caso.titulo,
@@ -13,6 +14,7 @@ export default function HomePage(): React.ReactElement {
     resumen: caso.resumen,
     tags: caso.tags,
     herramienta: caso.herramienta,
+    estado: caso.estado,
     orden: caso.orden,
     fecha: caso.fecha,
   }));

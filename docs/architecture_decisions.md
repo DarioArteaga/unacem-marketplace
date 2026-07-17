@@ -20,9 +20,11 @@ El cuerpo se renderiza con `next-mdx-remote/rsc`. Los bloques `mermaid` se deleg
 
 La home muestra primero un índice de cards por champion (nombre, área, cantidad de casos). Al elegir uno, se listan sus casos. El filtro por tags aplica en ambos niveles. No hay ruta `/champions/[slug]`: es estado de UI en el cliente (`CasoGrid`).
 
-## Tags temáticos y de estado
+## Estado y tags (formatter v2)
 
-Los casos llevan tags en el front-matter. Además de temas (`impuestos`, `automatización`, etc.), se admite el tag de estado `enproceso` para casos aún en desarrollo (intake sin solución documentada). En UI se muestra como "En proceso" y se estiliza distinto. Al cerrar el case study, se elimina `enproceso` del array. Definición en `src/lib/tags.ts`.
+- `estado` en front-matter: `enproceso` | `publicado` (opcional; sin campo = publicado). Badge y filtro "En proceso" salen de este campo (`src/lib/estado.ts`).
+- `tags` solo temáticos. Compatibilidad temporal: si un `.md` viejo aún trae el tag `enproceso`, se interpreta como estado.
+- Cuerpo del caso: secciones narrativas + tabla "El caso en datos" (GFM vía `remark-gfm`) + Mermaid. El MDX no fuerza títulos; la convención la define el formatter.
 
 ## Paleta de color (placeholder)
 

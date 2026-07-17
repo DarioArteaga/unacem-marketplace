@@ -2,6 +2,7 @@ import type { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import type { ReactElement, ReactNode } from "react";
 import { Children, isValidElement } from "react";
+import remarkGfm from "remark-gfm";
 import { MermaidDiagram } from "@/components/MermaidDiagram";
 
 type CodeProps = {
@@ -33,7 +34,7 @@ function Pre({ children }: { children?: ReactNode }): ReactElement {
   }
 
   return (
-    <pre className="overflow-x-auto rounded-xl bg-brand px-4 py-3 text-sm text-white">
+    <pre className="overflow-x-auto rounded-xl bg-ink px-4 py-3 text-sm text-white">
       {children}
     </pre>
   );
@@ -50,9 +51,23 @@ const components: MDXComponents = {
   p: (props) => <p className="mb-4 leading-relaxed text-ink" {...props} />,
   ul: (props) => <ul className="mb-4 list-disc space-y-2 pl-5 text-ink" {...props} />,
   ol: (props) => <ol className="mb-4 list-decimal space-y-2 pl-5 text-ink" {...props} />,
+  li: (props) => <li className="leading-relaxed" {...props} />,
+  strong: (props) => <strong className="font-semibold text-ink" {...props} />,
   a: (props) => (
     <a className="font-medium text-brand underline-offset-2 hover:underline" {...props} />
   ),
+  table: (props) => (
+    <div className="my-6 overflow-x-auto rounded-xl border border-ink-muted/15 bg-surface">
+      <table className="w-full min-w-[280px] border-collapse text-left text-sm" {...props} />
+    </div>
+  ),
+  thead: (props) => <thead className="bg-surface-muted" {...props} />,
+  tbody: (props) => <tbody {...props} />,
+  tr: (props) => <tr className="border-t border-ink-muted/10" {...props} />,
+  th: (props) => (
+    <th className="px-4 py-3 font-semibold text-brand" {...props} />
+  ),
+  td: (props) => <td className="px-4 py-3 align-top text-ink" {...props} />,
   code: (props) => {
     const className = props.className ?? "";
     if (className.includes("language-mermaid")) {
@@ -74,7 +89,15 @@ type MdxContentProps = {
 export async function MdxContent({ source }: MdxContentProps): Promise<ReactElement> {
   return (
     <div className="caso-prose max-w-none">
-      <MDXRemote source={source} components={components} />
+      <MDXRemote
+        source={source}
+        components={components}
+        options={{
+          mdxOptions: {
+            remarkPlugins: [remarkGfm],
+          },
+        }}
+      />
     </div>
   );
 }
