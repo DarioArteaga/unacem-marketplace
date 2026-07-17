@@ -4,7 +4,7 @@ champion: "Jennifer Aguilar"
 area: "Impuestos, GBS Perú"
 resumen: "Explorar el uso de inteligencia artificial para encontrar diferencias entre reportes contables sin cruces manuales."
 herramienta: "Claude"
-estado: "en proceso"
+estado: "enproceso"
 tags: ["impuestos", "automatización", "contabilidad"]
 fecha: "2026-07-17"
 ---

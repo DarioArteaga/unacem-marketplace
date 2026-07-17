@@ -1,4 +1,4 @@
-import { formatEstadoLabel, type EstadoCaso } from "@/lib/estado";
+import { formatEstadoLabel, isEnProceso, type EstadoCaso } from "@/lib/estado";
 
 type EstadoBadgeProps = {
   estado: EstadoCaso;
@@ -9,7 +9,7 @@ export function EstadoBadge({
   estado,
   interactive = false,
 }: EstadoBadgeProps): React.ReactElement | null {
-  if (estado === "publicado") {
+  if (!isEnProceso(estado)) {
     return null;
   }
 

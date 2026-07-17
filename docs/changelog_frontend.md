@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-07-17] [FIX] Aceptar `estado: "implementado"` y normalizar `en proceso` → `enproceso` (el build de Vercel fallaba al validar el front-matter).
+  Archivos modificados: src/lib/estado.ts, src/lib/schema.ts, src/components/EstadoBadge.tsx, src/components/CasoCard.tsx, content/casos/conciliacion-registros-contables.md, README.md, docs/architecture_decisions.md, docs/changelog_frontend.md
+
 - [2026-07-17] [FEAT] Formatter v2: campo `estado`, tags solo temáticos, tablas GFM y estilos para la nueva estructura de secciones del caso.
   Archivos modificados: src/lib/schema.ts, src/lib/estado.ts, src/lib/tags.ts, src/lib/casos.ts, src/components/MdxContent.tsx, src/components/EstadoBadge.tsx, src/components/TagBadge.tsx, src/components/TagFilter.tsx, src/components/CasoCard.tsx, src/components/CasoGrid.tsx, src/app/page.tsx, src/app/casos/[slug]/page.tsx, content/casos/certificados-retencion-proveedores-exterior.md, content/casos/liquidacion-mensual-igv.md, content/casos/conciliacion-registros-contables.md, package.json, README.md, docs/architecture_decisions.md, docs/changelog_frontend.md
 

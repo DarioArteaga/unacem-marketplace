@@ -79,7 +79,7 @@ fecha: "2026-07-16"
 
 | Campo | Valores | Uso |
 |---|---|---|
-| `estado` | `enproceso` o `publicado` | Madurez del caso. `enproceso` muestra el badge **En proceso**. Si omites el campo, se trata como publicado. |
+| `estado` | `enproceso` (también acepta `en proceso`), `implementado` o `publicado` | Madurez del caso. `enproceso` muestra el badge **En proceso**. `implementado` / `publicado` = case study cerrado (sin badge de proceso). |
 | `tags` | solo temas, ej. `impuestos` | Filtro temático. **No** pongas el estado aquí. |
 
 Cuando el case study esté cerrado: `estado: "publicado"` (o quita el campo).
