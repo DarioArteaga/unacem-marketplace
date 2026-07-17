@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 import { EstadoBadge } from "@/components/EstadoBadge";
 import { TagBadge } from "@/components/TagBadge";
 import { UnacemLoader } from "@/components/UnacemLoader";
-import { isEnProceso, resolveEstado } from "@/lib/estado";
+import { resolveEstado } from "@/lib/estado";
 import type { CasoCardData } from "@/lib/schema";
 import { sortTagsForDisplay } from "@/lib/tags";
 
@@ -72,11 +72,9 @@ export function CasoCard({ caso }: CasoCardProps): React.ReactElement {
           <span className="text-ink-muted"> · {caso.area}</span>
         </p>
         <ul className="flex flex-wrap gap-2" aria-label="Etiquetas">
-          {isEnProceso(estado) ? (
-            <li>
-              <EstadoBadge estado={estado} interactive />
-            </li>
-          ) : null}
+          <li>
+            <EstadoBadge estado={estado} interactive />
+          </li>
           {sortTagsForDisplay(caso.tags).map((tag) => (
             <li key={tag}>
               <TagBadge tag={tag} interactive />

@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-07-17] [FEAT] Badge visible para `implementado` / `publicado` (estilo neutro) además de `enproceso` (rojo).
+  Archivos modificados: src/components/EstadoBadge.tsx, src/components/CasoCard.tsx, README.md, docs/changelog_frontend.md
+
 - [2026-07-17] [FIX] Aceptar `estado: "implementado"` y normalizar `en proceso` → `enproceso` (el build de Vercel fallaba al validar el front-matter).
   Archivos modificados: src/lib/estado.ts, src/lib/schema.ts, src/components/EstadoBadge.tsx, src/components/CasoCard.tsx, content/casos/conciliacion-registros-contables.md, README.md, docs/architecture_decisions.md, docs/changelog_frontend.md
 

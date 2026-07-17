@@ -22,7 +22,7 @@ La home muestra primero un índice de cards por champion (nombre, área, cantida
 
 ## Estado y tags (formatter v2)
 
-- `estado` en front-matter: `enproceso` | `implementado` | `publicado` (opcional; sin campo = implementado). Badge y filtro "En proceso" solo para `enproceso` (`src/lib/estado.ts`).
+- `estado` en front-matter: `enproceso` | `implementado` | `publicado` (opcional; sin campo = implementado). Badge siempre visible: rojo para en proceso, neutro para implementado/publicado. El filtro chip "En proceso" sigue limitado a `enproceso` (`src/lib/estado.ts`).
 - `tags` solo temáticos. Compatibilidad temporal: si un `.md` viejo aún trae el tag `enproceso`, se interpreta como estado.
 - Cuerpo del caso: secciones narrativas + tabla "El caso en datos" (GFM vía `remark-gfm`) + Mermaid. El MDX no fuerza títulos; la convención la define el formatter.
 

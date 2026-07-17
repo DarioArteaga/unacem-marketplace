@@ -11,7 +11,7 @@ fecha: "2026-07-17"
 
 ## El problema
 
-Aplicar el diseño de la plantilla oficial de PowerPoint a cada presentación tomaba trabajo manual, revisando el formato diapositiva por diapositiva. El detalle exacto de cuánto pesaba esta tarea en el día a día está `[por confirmar]`.
+Aplicar el diseño de la plantilla oficial de PowerPoint a cada presentación tomaba trabajo manual, revisando el formato diapositiva por diapositiva.
 
 ## Cómo se hace hoy
 
@@ -39,4 +39,4 @@ flowchart LR
 
 ## El impacto
 
-La herramienta ya aplica la plantilla de forma automática a partir del borrador. El tiempo ahorrado y la reducción de errores frente al ajuste manual están `[por confirmar]`.
+La herramienta ya aplica la plantilla de forma automática a partir del borrador. El tiempo ahorrado y la reducción de errores frente al ajuste manual ha generado un ahorro de tiempo de 2 horas por presentación.
