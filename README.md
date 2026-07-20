@@ -40,7 +40,7 @@ Copia [`backend/.env.example`](backend/.env.example) a `backend/.env`:
 
 | Variable | Uso |
 |---|---|
-| `DATABASE_URL` | `postgresql+psycopg://...` |
+| `DATABASE_URL` | URL de Postgres. En Railway: **Variable Reference** desde el servicio Postgres (no uses `localhost`). La app también acepta `postgres://` / `postgresql://`. |
 | `JWT_SECRET` | Secreto JWT |
 | `ANTHROPIC_API_KEY` | Asistente LLM (opcional en local) |
 | `ALLOWED_ORIGINS` | Orígenes CORS (URL del front) |

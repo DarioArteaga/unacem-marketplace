@@ -1,7 +1,17 @@
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def normalize_database_url(url: str) -> str:
+    """Railway/Heroku suelen dar postgres:// o postgresql://; SQLAlchemy + psycopg3 necesita +psycopg."""
+    value = url.strip()
+    if value.startswith("postgres://"):
+        return "postgresql+psycopg://" + value.removeprefix("postgres://")
+    if value.startswith("postgresql://"):
+        return "postgresql+psycopg://" + value.removeprefix("postgresql://")
+    return value
 
 
 class Settings(BaseSettings):
@@ -25,6 +35,13 @@ class Settings(BaseSettings):
     revalidate_url: str = Field(default="", alias="REVALIDATE_URL")
     revalidate_secret: str = Field(default="", alias="REVALIDATE_SECRET")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def _normalize_database_url(cls, value: object) -> object:
+        if isinstance(value, str) and value:
+            return normalize_database_url(value)
+        return value
 
     @property
     def cors_origins(self) -> list[str]:
