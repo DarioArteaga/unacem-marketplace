@@ -1,0 +1,83 @@
+// Proyecto Salto v2 — esquema PostgreSQL
+// Fuente de verdad del modelo; sincronizar con SQLAlchemy en backend/app/models/
+
+Enum user_role {
+  super_admin
+  coach
+  viewer
+}
+
+Enum caso_etapa {
+  identificacion
+  diseno
+  implementacion
+  marketplace
+}
+
+Enum caso_estado {
+  enproceso
+  implementado
+  publicado
+}
+
+Table users {
+  id uuid [pk]
+  email varchar(255) [unique, not null]
+  password_hash varchar(255) [not null]
+  nombre varchar(255) [not null]
+  role user_role [not null, default: 'viewer']
+  is_active boolean [not null, default: true]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  Note: 'Coaches y super_admin. Registro crea viewer; super_admin asigna roles.'
+}
+
+Table casos {
+  id uuid [pk]
+  codigo varchar(64) [unique]
+  slug varchar(255) [unique, not null]
+  titulo varchar(255) [not null]
+  resumen varchar(140) [not null]
+  champion varchar(255) [not null]
+  area varchar(255) [not null]
+  owner_user_id uuid [not null, ref: > users.id]
+
+  descripcion text
+  problema text
+  valor_esperado text
+  publico_objetivo text
+  alcance text
+  diseno text
+
+  herramientas text[] [not null, default: '{}']
+  beneficiarios text[] [not null, default: '{}']
+  tags text[] [not null, default: '{}']
+
+  // { "entradas": string[], "pasos": string[], "salidas": string[] }
+  flujo jsonb [not null, default: '{"entradas":[],"pasos":[],"salidas":[]}']
+
+  etapa_actual caso_etapa [not null, default: 'identificacion']
+  estado caso_estado [not null, default: 'enproceso']
+  visible_publico boolean [not null, default: false]
+
+  adopcion_nivel varchar(64)
+  adopcion_detalle text
+  participacion_nivel varchar(64)
+  participacion_detalle text
+  eficiencia_resumen varchar(255)
+  eficiencia_detalle text
+
+  fecha_identificado date
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  Note: 'Caso 100% estructurado. avance_pct y dias_activo se derivan en lectura.'
+}
+
+indexes {
+  (casos.visible_publico)
+  (casos.owner_user_id)
+  (casos.etapa_actual)
+  (casos.estado)
+}

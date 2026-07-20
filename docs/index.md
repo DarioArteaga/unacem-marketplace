@@ -3,7 +3,8 @@
 | Documento | Descripción |
 |---|---|
 | [changelog_frontend.md](changelog_frontend.md) | Historial de cambios del frontend |
-| [changelog_backend.md](changelog_backend.md) | Historial de cambios del backend (sin backend en este MVP) |
-| [architecture_decisions.md](architecture_decisions.md) | Decisiones técnicas del marketplace |
+| [changelog_backend.md](changelog_backend.md) | Historial de cambios del backend |
+| [architecture_decisions.md](architecture_decisions.md) | Decisiones técnicas |
+| [schema.dbml](schema.dbml) | Esquema PostgreSQL (users, casos) |
 
-Punto de entrada para instalación y mantenimiento de contenido: [README.md](../README.md).
+Punto de entrada: [README.md](../README.md).

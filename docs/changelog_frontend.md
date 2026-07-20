@@ -1,5 +1,11 @@
 # Changelog Frontend
 
+- [2026-07-20] [REFACTOR] Monorepo explícito: el proyecto Next.js se mueve de la raíz a `frontend/` (hermano de `backend/`) para deploys independientes y mayor control de rutas.
+  Archivos modificados: frontend/** (movido desde raíz), frontend/.gitignore, .gitignore, backend/scripts/migrate_markdown.py, README.md, docs/architecture_decisions.md, docs/changelog_frontend.md
+
+- [2026-07-20] [FEAT] Marketplace v2: consume API FastAPI (ISR), AvanceCard/Metricas/FlujoPasos, panel /admin con BFF cookie, asistente LLM y gestión de roles; se retira MDX/Mermaid.
+  Archivos modificados: src/app/page.tsx, src/app/casos/[slug]/page.tsx, src/app/layout.tsx, src/app/globals.css, src/app/admin/**, src/app/api/**, src/middleware.ts, src/components/AvanceCard.tsx, src/components/MetricasCaso.tsx, src/components/FlujoPasos.tsx, src/components/CasoCard.tsx, src/components/CasoGrid.tsx, src/components/SiteChrome.tsx, src/components/admin/**, src/lib/api/**, src/lib/admin/**, src/lib/etapa.ts, src/lib/tags.ts, package.json, .env.example, README.md, docs/changelog_frontend.md
+
 - [2026-07-17] [FEAT] Badge visible para `implementado` / `publicado` (estilo neutro) además de `enproceso` (rojo).
   Archivos modificados: src/components/EstadoBadge.tsx, src/components/CasoCard.tsx, README.md, docs/changelog_frontend.md
 

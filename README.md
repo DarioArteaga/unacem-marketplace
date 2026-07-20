@@ -1,170 +1,125 @@
 # Proyecto Salto — Marketplace de casos de uso
 
-Sitio estático que muestra los casos de uso de IA desarrollados por champions de Grupo UNACEM. El contenido vive en archivos Markdown; al hacer push, Vercel redespliega el sitio.
+Marketplace público de casos de IA del Proyecto Salto (Grupo UNACEM), con panel de coaches.
 
-Documentación técnica adicional (documentación viva): [docs/index.md](docs/index.md).
+Monorepo con dos proyectos independientes:
+
+```
+marketplace-unacem/
+├── frontend/   # Next.js (Vercel) — lectura pública + /admin
+├── backend/    # FastAPI (Railway) + PostgreSQL
+└── docs/       # Documentación viva
+```
+
+- **Front:** Next.js (Vercel) — lectura pública + `/admin`
+- **API:** FastAPI (Railway) + PostgreSQL
+- **Auth:** email/password, JWT en cookie httpOnly vía BFF
+
+Documentación viva: [docs/index.md](docs/index.md).
 
 ## Requisitos
 
-- Node.js 20 o superior
-- npm
+- Node.js 20+
+- Python 3.11+
+- PostgreSQL 16+
+
+## Variables de entorno
+
+### Front (`frontend/` / Vercel)
+
+Copia [`frontend/.env.example`](frontend/.env.example) a `frontend/.env.local`:
+
+| Variable | Uso |
+|---|---|
+| `BACKEND_API_URL` | URL del API (ej. `http://localhost:8000`) |
+| `REVALIDATE_SECRET` | Token compartido con el backend para ISR on-demand |
+
+### Backend (`backend/` / Railway)
+
+Copia [`backend/.env.example`](backend/.env.example) a `backend/.env`:
+
+| Variable | Uso |
+|---|---|
+| `DATABASE_URL` | `postgresql+psycopg://...` |
+| `JWT_SECRET` | Secreto JWT |
+| `ANTHROPIC_API_KEY` | Asistente LLM (opcional en local) |
+| `ALLOWED_ORIGINS` | Orígenes CORS (URL del front) |
+| `SUPER_ADMIN_EMAIL` / `PASSWORD` / `NOMBRE` | Bootstrap del super_admin |
+| `REVALIDATE_URL` | `https://tu-front/api/revalidate` |
+| `REVALIDATE_SECRET` | Mismo valor que en el front |
 
 ## Cómo correr en local
 
-1. Abre una terminal en la raíz del proyecto.
-2. Instala dependencias:
+### 1. PostgreSQL + API (`backend/`)
 
 ```powershell
-npm install
+cd backend
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+copy .env.example .env
+# Edita DATABASE_URL y SUPER_ADMIN_*
+alembic upgrade head
+python scripts\seed_admin.py
+# Opcional — migrar Markdown histórico una vez:
+python scripts\migrate_markdown.py
+uvicorn app.main:app --reload --port 8000
 ```
 
-1. Arranca el servidor de desarrollo:
+Health: [http://localhost:8000/health](http://localhost:8000/health) · Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+### 2. Front (`frontend/`)
 
 ```powershell
+cd frontend
+npm install
+copy .env.example .env.local
 npm run dev
 ```
 
-1. Abre [http://localhost:3000](http://localhost:3000) en el navegador.
+Abre [http://localhost:3000](http://localhost:3000). Panel: [http://localhost:3000/admin](http://localhost:3000/admin).
 
-Para generar el sitio estático (igual que en Vercel):
+## Roles
 
-```powershell
-npm run build
-npm start
-```
-
-
-
-## Cómo agregar un caso nuevo
-
-No hace falta tocar código de React ni de Next.js. Solo creas un archivo Markdown y haces push.
-
-### Paso 1 — Crear el archivo
-
-En la carpeta `content/casos/`, crea un archivo `.md`. El **nombre del archivo** será la URL.
-
-
-| Archivo                          | URL                    |
-| -------------------------------- | ---------------------- |
-| `content/casos/mi-nuevo-caso.md` | `/casos/mi-nuevo-caso` |
-
-
-Usa solo minúsculas, números y guiones (sin espacios ni acentos en el nombre del archivo).
-
-### Paso 2 — Completar el encabezado (front-matter)
-
-Al inicio del archivo, entre `---`, van estos campos:
-
-```yaml
----
-titulo: "Título corto del caso"
-champion: "Nombre de la persona o equipo"
-area: "Área, país o unidad"
-resumen: "Una línea que aparece en la tarjeta (máximo 140 caracteres)"
-herramienta: "Claude"
-estado: "enproceso"
-tags: ["finanzas", "automatización"]
-orden: 4
-fecha: "2026-07-16"
----
-```
-
-**Obligatorios:** `titulo`, `champion`, `area`, `resumen`, `tags`.  
-**Opcionales:** `herramienta`, `estado`, `orden`, `fecha`.
-
-- Si falta un campo obligatorio, `npm run build` falla e indica el archivo y el campo.
-- `orden` controla la posición en el grid (menor número = primero). Si no hay `orden`, se ordena por `fecha` (más reciente primero).
-
-### Estado y tags
-
-| Campo | Valores | Uso |
-|---|---|---|
-| `estado` | `enproceso` (también acepta `en proceso`), `implementado` o `publicado` | Madurez del caso. Badge en card y detalle: **En proceso** (rojo) o **Implementado** / **Publicado** (neutro). |
-| `tags` | solo temas, ej. `impuestos` | Filtro temático. **No** pongas el estado aquí. |
-
-Cuando el case study esté cerrado: `estado: "publicado"` (o quita el campo).
-
-### Paso 3 — Escribir el cuerpo
-
-Estructura del formatter actual (el sitio renderiza cualquier Markdown; esta es la convención):
-
-```markdown
-## El problema
-...
-
-## Cómo se hace hoy
-...
-
-## El caso en datos
-
-| | |
+| Rol | Permisos |
 |---|---|
-| Qué lo dispara | ... |
-| Qué necesita | ... |
-| Qué entrega | ... |
-| Herramientas de siempre | ... |
+| `viewer` | Registro por defecto; sin escritura |
+| `coach` | Crea/edita/publica **sus** casos |
+| `super_admin` | Todos los casos + gestión de roles |
 
-## Qué se está construyendo
-...
-(o ## Cómo se resolvió / ## El impacto cuando el caso ya está cerrado)
+## Modelo de caso (v2)
 
-## El flujo
+Caso 100% estructurado (sin Markdown vivo ni Mermaid):
 
-(bloque mermaid)
+- Narrativa: descripción, problema, público, diseño, valor, alcance
+- Flujo: entradas → pasos → salidas
+- Pipeline: `etapa_actual` (Identificación → Diseño → Implementación → Marketplace; 25% c/u)
+- Vitrina: `estado` (`enproceso` \| `implementado` \| `publicado`)
+- Métricas: adopción, participación, percepción de eficiencia
+- Derivados en lectura: `avance_pct`, checklist, `dias_activo`
 
-## Qué se espera lograr
-...
-```
+Los `.md` en `frontend/content/casos/` son histórico; la fuente de verdad es PostgreSQL.
 
-### Paso 4 — Diagramas Mermaid
+## Despliegue
 
-Dentro del bloque de código con lenguaje `mermaid` escribe un diagrama válido. Ejemplos comunes:
+### Railway (backend)
 
-- `flowchart LR` — flujo de izquierda a derecha  
-- `flowchart TD` — de arriba hacia abajo
+1. Nuevo proyecto + plugin PostgreSQL.
+2. Servicio con **Root Directory** = `backend/`.
+3. Variables de entorno (tabla de arriba).
+4. Deploy corre `alembic upgrade head` y arranca uvicorn (`railway.toml`).
+5. Tras el primer deploy: ejecutar `seed_admin` (one-off) y, si aplica, `migrate_markdown`.
 
-Si la sintaxis es inválida, la página no se rompe: se muestra un mensaje discreto en lugar del diagrama.
+### Vercel (front)
 
-### Paso 5 — Publicar
+1. **Root Directory** = `frontend/` (ajustar en configuración del proyecto Vercel).
+2. Env: `BACKEND_API_URL`, `REVALIDATE_SECRET`.
+3. Al publicar/editar, el API llama a `/api/revalidate`.
 
-1. Guarda el archivo.
-2. En local, opcional: `npm run build` para validar.
-3. Haz commit y push a la rama que despliega Vercel.
-4. Vercel redespliega solo; el nuevo caso aparece en la home.
+## API (resumen)
 
+Público: `GET /api/v1/casos`, `GET /api/v1/casos/{slug}`, `GET /api/v1/champions`, `GET /api/v1/tags`.
 
+Auth: `POST /api/v1/auth/register|login`, `GET /api/v1/auth/me`.
 
-## Estructura del proyecto
-
-```
-content/casos/          ← aquí van los casos (Markdown)
-src/app/                ← páginas (home y detalle)
-src/components/         ← UI (cards, filtros, Mermaid)
-src/lib/                ← lectura y validación del contenido
-docs/                   ← changelog y decisiones técnicas
-```
-
-
-| Ruta            | Qué hace                                                        |
-| --------------- | --------------------------------------------------------------- |
-| `/`             | Hero + cards de champion → casos del champion + filtro por tags |
-| `/casos/[slug]` | Mini case study con diagrama                                    |
-
-
-
-
-## Comandos útiles
-
-
-| Comando         | Descripción                              |
-| --------------- | ---------------------------------------- |
-| `npm run dev`   | Desarrollo local                         |
-| `npm run build` | Build estático + validación de contenido |
-| `npm run lint`  | Linter                                   |
-
-
-
-
-## Despliegue en Vercel
-
-Conecta este repositorio a Vercel. Framework: Next.js. No se requiere base de datos ni variables de entorno para el MVP.
+Admin: CRUD `/api/v1/admin/casos`, publicar, `POST /api/v1/admin/assist`, usuarios (super_admin).

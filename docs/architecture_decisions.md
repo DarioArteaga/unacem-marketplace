@@ -1,35 +1,50 @@
 # Decisiones de arquitectura — Marketplace Proyecto Salto
 
-## Contenido en Markdown + Git
+## v2 — Backend + BDD + panel de coaches (2026-07-20)
 
-Los casos viven en `content/casos/*.md` con front-matter YAML. Una sola persona (coach del programa) edita archivos y hace push; Vercel redespliega. No hay CMS ni base de datos.
+### Separación front / back (monorepo)
 
-## Generación estática (SSG)
+- **Front:** Next.js (App Router) en `frontend/`, deploy en Vercel (Root Directory = `frontend/`). Marketplace público + panel `/admin`.
+- **Backend:** FastAPI en `backend/`, deploy en Railway (Root Directory = `backend/`) + PostgreSQL. API versionada `/api/v1/...`.
+- **BFF:** Route Handlers de Next guardan JWT en cookie httpOnly y hacen proxy a la API (evita cookies cross-site).
+- Cada carpeta tiene su propio ciclo de vida (deps, build, deploy) sin herramientas de monorepo (Turborepo/Nx): son dos stacks distintos (Node vs Python) y el tráfico es bajo, no se justifica la complejidad extra.
 
-Todas las rutas se prerenderizan en build con `generateStaticParams`. No hay fetch en runtime. Hosting en Vercel con el runtime de Next (sin `output: 'export'`).
+### Contenido estructurado (sin Markdown vivo)
 
-## Validación de front-matter con Zod
+Los casos viven en PostgreSQL como campos tipados (descripción, problema, valor, público, alcance, diseño, flujo JSON, etapas, métricas). El Markdown de `content/casos/` se migró una vez y deja de ser fuente de verdad.
 
-Campos obligatorios: `titulo`, `champion`, `area`, `resumen`, `tags`. Un error de validación aborta el build con mensaje que indica archivo y campo faltante.
+### Flujo como pasos estructurados
 
-## MDX remoto + Mermaid en cliente
+`flujo` es JSON `{ entradas[], pasos[], salidas[] }`. El front lo dibuja; no hay Mermaid.
 
-El cuerpo se renderiza con `next-mdx-remote/rsc`. Los bloques `mermaid` se delegan a un client component que importa `mermaid` de forma dinámica (lazy) y aplica la paleta de marca. Errores de sintaxis muestran un mensaje discreto sin romper la página.
+### Avance y estado (conviven)
 
-## Navegación por champion
+- `etapa_actual`: identificacion | diseno | implementacion | marketplace (25% cada una; badge público).
+- `estado`: enproceso | implementado | publicado (vitrina / filtro).
+- Derivados en lectura: `avance_pct`, checklist de etapas, `dias_activo`.
 
-La home muestra primero un índice de cards por champion (nombre, área, cantidad de casos). Al elegir uno, se listan sus casos. El filtro por tags aplica en ambos niveles. No hay ruta `/champions/[slug]`: es estado de UI en el cliente (`CasoGrid`).
+### Vitrina pública (opción B)
 
-## Estado y tags (formatter v2)
+Detalle público: narrativa estructurada + tarjeta de avance + 3 métricas (adopción, participación, percepción de eficiencia). Sin login.
 
-- `estado` en front-matter: `enproceso` | `implementado` | `publicado` (opcional; sin campo = implementado). Badge siempre visible: rojo para en proceso, neutro para implementado/publicado. El filtro chip "En proceso" sigue limitado a `enproceso` (`src/lib/estado.ts`).
-- `tags` solo temáticos. Compatibilidad temporal: si un `.md` viejo aún trae el tag `enproceso`, se interpreta como estado.
-- Cuerpo del caso: secciones narrativas + tabla "El caso en datos" (GFM vía `remark-gfm`) + Mermaid. El MDX no fuerza títulos; la convención la define el formatter.
+### Auth y roles
 
-## Paleta de color (placeholder)
+- Registro: email + password (hash argon2) → rol `viewer`.
+- Roles: `super_admin` (todo), `coach` (solo casos con `owner_user_id` = él), `viewer` (sin escritura hasta promoción).
+- JWT emitido por FastAPI; cookie de sesión vía BFF.
 
-Tokens en `globals.css`: primario `#C8102E`, acento `#8C1A2B`, tinta `#1A1A1A` / `#5A5A5A`, fondos `#FFFFFF` / `#F5F5F5`. Pendiente de confirmar contra el manual de marca UNACEM.
+### Asistente LLM
 
-## Alcance deliberadamente reducido
+Endpoint admin que envía texto libre a Anthropic (key solo en backend). Devuelve JSON sugerido por campos; el coach aplica y guarda explícitamente.
 
-Sin autenticación, sin estados de proyecto, sin analytics de terceros, sin página `/acerca`, sin CTA `mailto` en el detalle del caso.
+### Lectura pública e ISR
+
+Next hace fetch a la API con revalidate; al publicar/editar el backend llama al webhook `/api/revalidate` del front.
+
+### Paleta de color (placeholder)
+
+Tokens en `globals.css`: primario `#C8102E`, acento `#8C1A2B`, tinta `#1A1A1A` / `#5A5A5A`, fondos `#FFFFFF` / `#F5F5F5`.
+
+## Histórico v1 (superseded)
+
+Markdown + Git, SSG puro, MDX/Mermaid, sin auth. Sustituido por v2.

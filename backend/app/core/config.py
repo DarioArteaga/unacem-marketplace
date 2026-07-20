@@ -1,0 +1,36 @@
+from functools import lru_cache
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    database_url: str = Field(
+        default="postgresql+psycopg://postgres:postgres@localhost:5432/salto",
+        alias="DATABASE_URL",
+    )
+    jwt_secret: str = Field(default="dev-secret-change-me", alias="JWT_SECRET")
+    jwt_expire_minutes: int = Field(default=60 * 24 * 7, alias="JWT_EXPIRE_MINUTES")
+    anthropic_api_key: str = Field(default="", alias="ANTHROPIC_API_KEY")
+    allowed_origins: str = Field(default="http://localhost:3000", alias="ALLOWED_ORIGINS")
+    super_admin_email: str = Field(default="admin@example.com", alias="SUPER_ADMIN_EMAIL")
+    super_admin_password: str = Field(default="change-me", alias="SUPER_ADMIN_PASSWORD")
+    super_admin_nombre: str = Field(default="Super Admin", alias="SUPER_ADMIN_NOMBRE")
+    revalidate_url: str = Field(default="", alias="REVALIDATE_URL")
+    revalidate_secret: str = Field(default="", alias="REVALIDATE_SECRET")
+    log_level: str = Field(default="INFO", alias="LOG_LEVEL")
+
+    @property
+    def cors_origins(self) -> list[str]:
+        return [origin.strip() for origin in self.allowed_origins.split(",") if origin.strip()]
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
