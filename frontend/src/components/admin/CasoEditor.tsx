@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { FormEvent, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 import type { AssistSuggestion, CasoAdmin, CasoWritePayload } from "@/lib/api/types";
 import {
   casoFormSchema,
@@ -13,6 +13,34 @@ import {
 type CasoEditorProps = {
   initial?: CasoAdmin | null;
 };
+
+function PublicadoBanner(): React.ReactElement | null {
+  const search = useSearchParams();
+  const router = useRouter();
+  if (search.get("ok") !== "publicado") return null;
+  return (
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-brand/10 px-4 py-3 text-sm text-ink">
+      <p>
+        Caso publicado en el marketplace. Puedes crear otro abajo, o{" "}
+        <button
+          type="button"
+          className="font-medium text-brand underline"
+          onClick={() => router.push("/admin")}
+        >
+          ver la lista
+        </button>
+        .
+      </p>
+      <button
+        type="button"
+        className="text-xs text-ink-muted underline"
+        onClick={() => router.replace("/admin/casos/nuevo")}
+      >
+        Cerrar aviso
+      </button>
+    </div>
+  );
+}
 
 function emptyForm(): CasoFormValues {
   return {
@@ -136,17 +164,34 @@ async function proxy<T>(path: string, method: string, body?: unknown): Promise<T
 }
 
 export function CasoEditor({ initial }: CasoEditorProps): React.ReactElement {
+  return (
+    <Suspense fallback={<p className="text-ink-muted">Cargando editor…</p>}>
+      <CasoEditorInner initial={initial} />
+    </Suspense>
+  );
+}
+
+function CasoEditorInner({ initial }: CasoEditorProps): React.ReactElement {
   const router = useRouter();
   const [form, setForm] = useState<CasoFormValues>(() =>
     initial ? fromCaso(initial) : emptyForm(),
   );
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [assistText, setAssistText] = useState("");
   const [suggestion, setSuggestion] = useState<AssistSuggestion | null>(null);
   const [assistLoading, setAssistLoading] = useState(false);
+  const [casoId, setCasoId] = useState<string | null>(initial?.id ?? null);
 
-  const isEdit = Boolean(initial);
+  const isEdit = Boolean(casoId);
+
+  useEffect(() => {
+    if (initial) {
+      setForm(fromCaso(initial));
+      setCasoId(initial.id);
+    }
+  }, [initial]);
 
   const suggestionEntries = useMemo(() => {
     if (!suggestion) return [];
@@ -162,6 +207,7 @@ export function CasoEditor({ initial }: CasoEditorProps): React.ReactElement {
   async function onSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     setError(null);
+    setSuccess(null);
     const parsed = casoFormSchema.safeParse(form);
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Revisa el formulario");
@@ -170,13 +216,19 @@ export function CasoEditor({ initial }: CasoEditorProps): React.ReactElement {
     setSaving(true);
     try {
       const payload = toPayload(parsed.data);
-      if (isEdit && initial) {
-        await proxy(`/api/v1/admin/casos/${initial.id}`, "PATCH", payload);
-        router.push("/admin");
+      if (casoId) {
+        await proxy(`/api/v1/admin/casos/${casoId}`, "PATCH", payload);
+        setSuccess("Cambios guardados. El caso sigue editable.");
         router.refresh();
       } else {
-        const created = await proxy<CasoAdmin>("/api/v1/admin/casos", "POST", payload);
-        router.push(`/admin/casos/${created.id}`);
+        const created = await proxy<CasoAdmin>("/api/v1/admin/casos", "POST", {
+          ...payload,
+          visible_publico: false,
+        });
+        setCasoId(created.id);
+        setForm(fromCaso(created));
+        setSuccess("Borrador guardado. Ya puedes publicarlo en el marketplace.");
+        router.replace(`/admin/casos/${created.id}`);
         router.refresh();
       }
     } catch (err) {
@@ -239,13 +291,29 @@ export function CasoEditor({ initial }: CasoEditorProps): React.ReactElement {
   }
 
   async function togglePublicar(): Promise<void> {
-    if (!initial) return;
+    if (!casoId) {
+      setError("Guarda el borrador antes de publicar.");
+      return;
+    }
+    const publicar = !form.visible_publico;
     setSaving(true);
+    setError(null);
+    setSuccess(null);
     try {
-      await proxy(`/api/v1/admin/casos/${initial.id}/publicar`, "POST", {
-        visible_publico: !form.visible_publico,
+      const parsed = casoFormSchema.safeParse(form);
+      if (parsed.success) {
+        await proxy(`/api/v1/admin/casos/${casoId}`, "PATCH", toPayload(parsed.data));
+      }
+      await proxy(`/api/v1/admin/casos/${casoId}/publicar`, "POST", {
+        visible_publico: publicar,
       });
-      setField("visible_publico", !form.visible_publico);
+      if (publicar) {
+        router.push("/admin/casos/nuevo?ok=publicado");
+        router.refresh();
+        return;
+      }
+      setField("visible_publico", false);
+      setSuccess("Caso oculto del marketplace. Puedes seguir editándolo.");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al publicar");
@@ -255,11 +323,11 @@ export function CasoEditor({ initial }: CasoEditorProps): React.ReactElement {
   }
 
   async function onDelete(): Promise<void> {
-    if (!initial) return;
+    if (!casoId) return;
     if (!window.confirm("¿Eliminar este caso? Esta acción no se puede deshacer.")) return;
     setSaving(true);
     try {
-      await proxy(`/api/v1/admin/casos/${initial.id}`, "DELETE");
+      await proxy(`/api/v1/admin/casos/${casoId}`, "DELETE");
       router.push("/admin");
       router.refresh();
     } catch (err) {
@@ -271,40 +339,79 @@ export function CasoEditor({ initial }: CasoEditorProps): React.ReactElement {
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
       <form onSubmit={(e) => void onSubmit(e)} className="space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="font-serif text-3xl font-semibold text-brand">
-            {isEdit ? "Editar caso" : "Nuevo caso"}
-          </h1>
-          <div className="flex flex-wrap gap-2">
+        {!initial ? <PublicadoBanner /> : null}
+
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="space-y-2">
+            <h1 className="font-serif text-3xl font-semibold text-brand">
+              {isEdit ? "Editar caso" : "Nuevo caso"}
+            </h1>
             {isEdit ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() => void togglePublicar()}
-                  className="rounded-lg border border-ink-muted/20 bg-surface px-3 py-2 text-sm"
-                >
-                  {form.visible_publico ? "Ocultar del público" : "Publicar"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void onDelete()}
-                  className="rounded-lg border border-brand/30 px-3 py-2 text-sm text-brand"
-                >
-                  Eliminar
-                </button>
-              </>
+              <p
+                className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                  form.visible_publico
+                    ? "bg-brand/10 text-brand"
+                    : "bg-surface text-ink-muted ring-1 ring-ink-muted/20"
+                }`}
+              >
+                {form.visible_publico ? "Publicado en el marketplace" : "Borrador (solo admin)"}
+              </p>
+            ) : (
+              <p className="text-sm text-ink-muted">
+                Primero guarda el borrador; después podrás publicarlo.
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {isEdit ? (
+              <button
+                type="button"
+                onClick={() => void onDelete()}
+                disabled={saving}
+                className="rounded-lg border border-brand/30 px-3 py-2 text-sm text-brand disabled:opacity-60"
+              >
+                Eliminar
+              </button>
             ) : null}
+
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+              className="rounded-lg border border-ink-muted/20 bg-surface px-4 py-2 text-sm font-medium text-ink disabled:opacity-60"
             >
-              {saving ? "Guardando…" : "Guardar"}
+              {saving
+                ? "Guardando…"
+                : isEdit
+                  ? "Guardar cambios"
+                  : "Guardar borrador"}
             </button>
+
+            {isEdit ? (
+              <button
+                type="button"
+                onClick={() => void togglePublicar()}
+                disabled={saving}
+                className={
+                  form.visible_publico
+                    ? "rounded-lg border border-ink-muted/20 bg-surface px-4 py-2 text-sm font-medium text-ink disabled:opacity-60"
+                    : "rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+                }
+              >
+                {saving
+                  ? "…"
+                  : form.visible_publico
+                    ? "Ocultar del marketplace"
+                    : "Publicar en marketplace"}
+              </button>
+            ) : null}
           </div>
         </div>
 
         {error ? <p className="rounded-lg bg-brand/10 px-3 py-2 text-sm text-brand">{error}</p> : null}
+        {success ? (
+          <p className="rounded-lg bg-ink/5 px-3 py-2 text-sm text-ink">{success}</p>
+        ) : null}
 
         <Field label="Título">
           <input
@@ -526,15 +633,6 @@ export function CasoEditor({ initial }: CasoEditorProps): React.ReactElement {
             </Field>
           </div>
         </fieldset>
-
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={form.visible_publico}
-            onChange={(e) => setField("visible_publico", e.target.checked)}
-          />
-          Visible en el marketplace público
-        </label>
       </form>
 
       <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
