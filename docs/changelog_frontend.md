@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-07-21] [FIX] Asistente LLM: feedback al aplicar campo (aviso + botón «Aplicado ✓»).
+  Archivos modificados: frontend/src/components/admin/CasoEditor.tsx, docs/changelog_frontend.md
+
 - [2026-07-21] [FIX] UX editor admin: estados Borrador/Publicado, Guardar cambios vs Publicar, tras publicar abre formulario de nuevo caso.
   Archivos modificados: frontend/src/components/admin/CasoEditor.tsx, docs/changelog_frontend.md
 

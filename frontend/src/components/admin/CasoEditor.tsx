@@ -182,6 +182,8 @@ function CasoEditorInner({ initial }: CasoEditorProps): React.ReactElement {
   const [assistText, setAssistText] = useState("");
   const [suggestion, setSuggestion] = useState<AssistSuggestion | null>(null);
   const [assistLoading, setAssistLoading] = useState(false);
+  const [appliedKeys, setAppliedKeys] = useState<Set<string>>(new Set());
+  const [applyNotice, setApplyNotice] = useState<string | null>(null);
   const [casoId, setCasoId] = useState<string | null>(initial?.id ?? null);
 
   const isEdit = Boolean(casoId);
@@ -246,6 +248,8 @@ function CasoEditorInner({ initial }: CasoEditorProps): React.ReactElement {
         texto: assistText,
       });
       setSuggestion(result);
+      setAppliedKeys(new Set());
+      setApplyNotice(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error del asistente");
     } finally {
@@ -279,15 +283,22 @@ function CasoEditorInner({ initial }: CasoEditorProps): React.ReactElement {
         flujoPasos: listToLines(flujo.pasos),
         flujoSalidas: listToLines(flujo.salidas),
       }));
-      return;
-    }
-    const field = map[key];
-    if (!field) return;
-    if (Array.isArray(value)) {
-      setField(field, listToLines(value as string[]) as never);
     } else {
-      setField(field, String(value ?? "") as never);
+      const field = map[key];
+      if (!field) return;
+      if (Array.isArray(value)) {
+        setField(field, listToLines(value as string[]) as never);
+      } else {
+        setField(field, String(value ?? "") as never);
+      }
     }
+    setAppliedKeys((prev) => new Set(prev).add(key));
+    setApplyNotice(`Campo «${key}» aplicado al formulario`);
+    window.setTimeout(() => {
+      setApplyNotice((current) =>
+        current === `Campo «${key}» aplicado al formulario` ? null : current,
+      );
+    }, 2500);
   }
 
   async function togglePublicar(): Promise<void> {
@@ -656,6 +667,14 @@ function CasoEditorInner({ initial }: CasoEditorProps): React.ReactElement {
           >
             {assistLoading ? "Pensando…" : "Sugerir campos"}
           </button>
+          {applyNotice ? (
+            <p
+              role="status"
+              className="mt-2 rounded-lg bg-brand/10 px-3 py-2 text-xs font-medium text-brand"
+            >
+              {applyNotice}
+            </p>
+          ) : null}
           {suggestionEntries.length > 0 ? (
             <ul className="mt-4 max-h-80 space-y-2 overflow-y-auto">
               {suggestionEntries.map(([key, value]) => (
@@ -667,10 +686,14 @@ function CasoEditorInner({ initial }: CasoEditorProps): React.ReactElement {
                     <span className="font-semibold text-brand">{key}</span>
                     <button
                       type="button"
-                      className="rounded bg-brand px-2 py-0.5 text-[10px] font-medium text-white"
+                      className={
+                        appliedKeys.has(key)
+                          ? "rounded bg-ink/10 px-2 py-0.5 text-[10px] font-medium text-ink"
+                          : "rounded bg-brand px-2 py-0.5 text-[10px] font-medium text-white"
+                      }
                       onClick={() => applySuggestion(key, value)}
                     >
-                      Aplicar
+                      {appliedKeys.has(key) ? "Aplicado ✓" : "Aplicar"}
                     </button>
                   </div>
                   <pre className="whitespace-pre-wrap break-words font-sans text-[11px] text-ink-muted">
