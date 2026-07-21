@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-07-21] [FIX] AvanceCard: fechas/métricas en columna (evita overflow en sidebar 320px); etiqueta «Actualizado» y aclaración de días activo.
+  Archivos modificados: frontend/src/components/AvanceCard.tsx, docs/changelog_frontend.md
+
 - [2026-07-20] [REFACTOR] Monorepo explícito: el proyecto Next.js se mueve de la raíz a `frontend/` (hermano de `backend/`) para deploys independientes y mayor control de rutas.
   Archivos modificados: frontend/** (movido desde raíz), frontend/.gitignore, .gitignore, backend/scripts/migrate_markdown.py, README.md, docs/architecture_decisions.md, docs/changelog_frontend.md
 

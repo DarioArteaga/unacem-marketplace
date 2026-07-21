@@ -51,30 +51,38 @@ export function AvanceCard({ caso }: AvanceCardProps): React.ReactElement {
         </ul>
       </div>
 
-      <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
-        <div className="rounded-xl bg-surface px-3 py-2 ring-1 ring-ink-muted/10">
-          <p className="text-[10px] font-medium tracking-wide text-ink-muted uppercase">
+      {/* Una columna: el aside es ~320px; 3 cols rompían labels largos (overflow). */}
+      <dl className="mt-5 grid grid-cols-1 gap-2">
+        <div className="min-w-0 rounded-xl bg-surface px-3 py-2.5 ring-1 ring-ink-muted/10">
+          <dt className="text-[10px] font-medium tracking-wide text-ink-muted uppercase">
             Identificado
-          </p>
-          <p className="mt-0.5 text-sm font-medium text-ink">
+          </dt>
+          <dd className="mt-0.5 truncate text-sm font-medium text-ink">
             {formatDateEs(caso.fecha_identificado)}
-          </p>
+          </dd>
         </div>
-        <div className="rounded-xl bg-surface px-3 py-2 ring-1 ring-ink-muted/10">
-          <p className="text-[10px] font-medium tracking-wide text-ink-muted uppercase">
-            Últ. actualización
-          </p>
-          <p className="mt-0.5 text-sm font-medium text-ink">
+        <div className="min-w-0 rounded-xl bg-surface px-3 py-2.5 ring-1 ring-ink-muted/10">
+          <dt className="text-[10px] font-medium tracking-wide text-ink-muted uppercase">
+            Actualizado
+          </dt>
+          <dd className="mt-0.5 truncate text-sm font-medium text-ink">
             {formatDateEs(caso.updated_at.slice(0, 10))}
-          </p>
+          </dd>
         </div>
-        <div className="rounded-xl bg-surface px-3 py-2 ring-1 ring-ink-muted/10">
-          <p className="text-[10px] font-medium tracking-wide text-ink-muted uppercase">
+        <div className="min-w-0 rounded-xl bg-surface px-3 py-2.5 ring-1 ring-ink-muted/10">
+          <dt className="text-[10px] font-medium tracking-wide text-ink-muted uppercase">
             Días activo
-          </p>
-          <p className="mt-0.5 text-sm font-medium text-ink">{caso.dias_activo ?? "—"}</p>
+          </dt>
+          <dd className="mt-0.5 text-sm font-medium text-ink">
+            {caso.dias_activo ?? "—"}
+            {caso.dias_activo !== null ? (
+              <span className="ml-1 font-normal text-ink-muted">
+                desde identificación
+              </span>
+            ) : null}
+          </dd>
         </div>
-      </div>
+      </dl>
 
       <p className="mt-4 text-xs text-ink-muted">
         El avance es proporcional a la etapa:{" "}
