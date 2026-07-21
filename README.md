@@ -43,6 +43,7 @@ Copia [`backend/.env.example`](backend/.env.example) a `backend/.env`:
 | `DATABASE_URL` | URL de Postgres. En Railway: **Variable Reference** desde el servicio Postgres (no uses `localhost`). La app también acepta `postgres://` / `postgresql://`. |
 | `JWT_SECRET` | Secreto JWT |
 | `ANTHROPIC_API_KEY` | Asistente LLM (opcional en local) |
+| `ANTHROPIC_MODEL` | Modelo Anthropic (default: `claude-sonnet-5`). Ej.: `claude-sonnet-5`, `claude-opus-4-8`, `claude-haiku-4-5` |
 | `ALLOWED_ORIGINS` | Orígenes CORS (URL del front) |
 | `SUPER_ADMIN_EMAIL` / `PASSWORD` / `NOMBRE` | Bootstrap del super_admin |
 | `REVALIDATE_URL` | `https://tu-front/api/revalidate` |

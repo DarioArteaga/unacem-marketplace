@@ -4,6 +4,7 @@ import json
 import re
 
 import anthropic
+from fastapi import HTTPException, status
 from pydantic import ValidationError
 
 from app.core.config import get_settings
@@ -37,17 +38,45 @@ def suggest_from_text(texto: str) -> AssistSuggestion:
         return AssistSuggestion()
 
     client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
-    message = client.messages.create(
-        model="claude-sonnet-4-20250514",
-        max_tokens=2048,
-        system=SYSTEM_PROMPT,
-        messages=[
-            {
-                "role": "user",
-                "content": f"Texto de entrada:\n\n{texto.strip()}",
-            }
-        ],
-    )
+    try:
+        message = client.messages.create(
+            model=settings.anthropic_model,
+            max_tokens=2048,
+            system=SYSTEM_PROMPT,
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"Texto de entrada:\n\n{texto.strip()}",
+                }
+            ],
+        )
+    except anthropic.NotFoundError as exc:
+        logger.error(
+            "Modelo Anthropic no encontrado",
+            model=settings.anthropic_model,
+            error=str(exc),
+        )
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=(
+                f"Modelo no disponible: '{settings.anthropic_model}'. "
+                "Revisa ANTHROPIC_MODEL en Railway (ej. claude-sonnet-5)."
+            ),
+        ) from exc
+    except anthropic.AuthenticationError as exc:
+        logger.error("ANTHROPIC_API_KEY inválida", error=str(exc))
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Clave Anthropic inválida. Revisa ANTHROPIC_API_KEY.",
+        ) from exc
+    except anthropic.APIError as exc:
+        logger.error("Error Anthropic API", error=str(exc), status=getattr(exc, "status_code", None))
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Error al llamar al asistente LLM. Intenta de nuevo.",
+        ) from exc
+
+    logger.info("Asistente LLM respondió", model=settings.anthropic_model)
     raw = "".join(block.text for block in message.content if hasattr(block, "text"))
     data = _extract_json(raw)
     try:

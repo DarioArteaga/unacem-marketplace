@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     jwt_secret: str = Field(default="dev-secret-change-me", alias="JWT_SECRET")
     jwt_expire_minutes: int = Field(default=60 * 24 * 7, alias="JWT_EXPIRE_MINUTES")
     anthropic_api_key: str = Field(default="", alias="ANTHROPIC_API_KEY")
+    anthropic_model: str = Field(
+        default="claude-sonnet-5",
+        alias="ANTHROPIC_MODEL",
+    )
     allowed_origins: str = Field(default="http://localhost:3000", alias="ALLOWED_ORIGINS")
     super_admin_email: str = Field(default="admin@example.com", alias="SUPER_ADMIN_EMAIL")
     super_admin_password: str = Field(default="change-me", alias="SUPER_ADMIN_PASSWORD")
