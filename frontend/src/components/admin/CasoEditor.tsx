@@ -257,14 +257,30 @@ function CasoEditorInner({ initial }: CasoEditorProps): React.ReactElement {
   async function onAssist(): Promise<void> {
     setAssistLoading(true);
     setError(null);
+    setApplyNotice(null);
     try {
       const result = await proxy<AssistSuggestion>("/api/v1/admin/assist", "POST", {
         texto: assistText,
       });
       setSuggestion(result);
       setAppliedKeys(new Set());
-      setApplyNotice(null);
+      const hasFields = Object.values(result).some((value) => {
+        if (value === null || value === undefined || value === "") return false;
+        if (Array.isArray(value)) return value.length > 0;
+        if (typeof value === "object") {
+          return Object.values(value as Record<string, unknown>).some(
+            (v) => Array.isArray(v) ? v.length > 0 : Boolean(v),
+          );
+        }
+        return true;
+      });
+      if (!hasFields) {
+        setApplyNotice(
+          "El asistente respondió sin campos útiles. Prueba con un texto más corto.",
+        );
+      }
     } catch (err) {
+      setSuggestion(null);
       setError(err instanceof Error ? err.message : "Error del asistente");
     } finally {
       setAssistLoading(false);

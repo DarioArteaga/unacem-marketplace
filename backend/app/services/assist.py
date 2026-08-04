@@ -13,6 +13,9 @@ from app.schemas.assist import AssistSuggestion
 
 logger = get_logger("assist")
 
+# Salida corta: textos largos + max_tokens bajo cortaban el JSON y el front veía "nada".
+MAX_OUTPUT_TOKENS = 4096
+
 SYSTEM_PROMPT = """Eres un editor del Proyecto Salto (UNACEM).
 A partir de texto libre (notas, Markdown o ideas), sugiere campos estructurados para un caso de uso de IA.
 
@@ -22,7 +25,10 @@ Reglas:
 - Filtra correos, % de avance internos, bloqueantes de TI, nombres de terceros no champions.
 - Español latinoamericano neutro, frases cortas.
 - resumen máximo 140 caracteres.
+- Campos de texto largos (descripcion, problema, valor_esperado, publico_objetivo, alcance, diseno):
+  máximo 400 caracteres cada uno. Resume; no copies párrafos enteros.
 - flujo: objetos con arrays entradas, pasos, salidas (máx 6 ítems cada uno, textos cortos).
+- Prioriza completar titulo, resumen, champion, area, tags y flujo aunque el texto sea muy largo.
 
 Responde SOLO con un JSON válido (sin markdown) con estas claves opcionales:
 titulo, resumen, champion, area, descripcion, problema, valor_esperado,
@@ -37,16 +43,17 @@ def suggest_from_text(texto: str) -> AssistSuggestion:
         logger.warn("ANTHROPIC_API_KEY ausente; devolviendo sugerencia vacía")
         return AssistSuggestion()
 
+    cleaned = texto.strip()
     client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
     try:
         message = client.messages.create(
             model=settings.anthropic_model,
-            max_tokens=2048,
+            max_tokens=MAX_OUTPUT_TOKENS,
             system=SYSTEM_PROMPT,
             messages=[
                 {
                     "role": "user",
-                    "content": f"Texto de entrada:\n\n{texto.strip()}",
+                    "content": f"Texto de entrada:\n\n{cleaned}",
                 }
             ],
         )
@@ -76,14 +83,70 @@ def suggest_from_text(texto: str) -> AssistSuggestion:
             detail="Error al llamar al asistente LLM. Intenta de nuevo.",
         ) from exc
 
-    logger.info("Asistente LLM respondió", model=settings.anthropic_model)
+    stop_reason = getattr(message, "stop_reason", None)
     raw = "".join(block.text for block in message.content if hasattr(block, "text"))
+    logger.info(
+        "Asistente LLM respondió",
+        model=settings.anthropic_model,
+        input_chars=len(cleaned),
+        output_chars=len(raw),
+        stop_reason=stop_reason,
+    )
+
+    if stop_reason == "max_tokens":
+        logger.warn(
+            "Respuesta LLM truncada por max_tokens; el JSON puede quedar incompleto",
+            max_tokens=MAX_OUTPUT_TOKENS,
+        )
+
     data = _extract_json(raw)
+    if not data:
+        logger.error(
+            "No se pudo parsear JSON del asistente",
+            stop_reason=stop_reason,
+            raw_preview=raw[:500],
+        )
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=(
+                "El asistente respondió, pero el JSON quedó incompleto o inválido. "
+                "Prueba con un texto más corto o vuelve a intentar."
+            ),
+        )
+
     try:
-        return AssistSuggestion.model_validate(data)
+        suggestion = AssistSuggestion.model_validate(data)
     except ValidationError as exc:
-        logger.error("Sugerencia LLM inválida", error=str(exc))
-        return AssistSuggestion()
+        logger.error("Sugerencia LLM inválida", error=str(exc), raw_preview=raw[:500])
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="La sugerencia del asistente no tiene el formato esperado. Intenta de nuevo.",
+        ) from exc
+
+    if not _has_content(suggestion):
+        logger.warn("Sugerencia LLM vacía tras parseo", keys=list(data.keys()))
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=(
+                "El asistente no extrajo campos útiles. "
+                "Prueba con un resumen más corto del caso."
+            ),
+        )
+
+    return suggestion
+
+
+def _has_content(suggestion: AssistSuggestion) -> bool:
+    payload = suggestion.model_dump()
+    for value in payload.values():
+        if value is None or value == "":
+            continue
+        if isinstance(value, list) and len(value) == 0:
+            continue
+        if isinstance(value, dict) and not any(value.values()):
+            continue
+        return True
+    return False
 
 
 def _extract_json(raw: str) -> dict:

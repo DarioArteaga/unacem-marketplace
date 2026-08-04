@@ -1,5 +1,8 @@
 # Changelog Backend
 
+- [2026-08-04] [FIX] Asistente: `max_tokens` 4096, campos de salida acotados, y error 502 visible si el JSON llega truncado/vacío (antes devolvía 200 vacío).
+  Archivos modificados: backend/app/services/assist.py, docs/changelog_backend.md
+
 - [2026-08-04] [FEAT] Casos: campos JSONB `prompts` y `skills` (`[{titulo, contenido}]`, orden = índice); migración Alembic `002`.
   Archivos modificados: backend/app/models/caso.py, backend/app/schemas/caso.py, backend/app/services/casos.py, backend/alembic/versions/002_casos_prompts_skills.py, docs/schema.dbml, docs/architecture_decisions.md, docs/changelog_backend.md
 
