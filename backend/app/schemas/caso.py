@@ -14,6 +14,13 @@ class FlujoPasos(BaseModel):
     salidas: list[str] = Field(default_factory=list)
 
 
+class RecursoTexto(BaseModel):
+    """Prompt o skill del champion (orden = índice en el array)."""
+
+    titulo: str = Field(min_length=1, max_length=255)
+    contenido: str = Field(min_length=1, max_length=50000)
+
+
 class EtapaChecklistItem(BaseModel):
     key: CasoEtapa
     label: str
@@ -66,6 +73,8 @@ class CasoBase(BaseModel):
     beneficiarios: list[str] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     flujo: FlujoPasos = Field(default_factory=FlujoPasos)
+    prompts: list[RecursoTexto] = Field(default_factory=list)
+    skills: list[RecursoTexto] = Field(default_factory=list)
     etapa_actual: CasoEtapa = CasoEtapa.identificacion
     estado: CasoEstado = CasoEstado.enproceso
     adopcion_nivel: str | None = None
@@ -108,6 +117,8 @@ class CasoUpdate(BaseModel):
     beneficiarios: list[str] | None = None
     tags: list[str] | None = None
     flujo: FlujoPasos | None = None
+    prompts: list[RecursoTexto] | None = None
+    skills: list[RecursoTexto] | None = None
     etapa_actual: CasoEtapa | None = None
     estado: CasoEstado | None = None
     visible_publico: bool | None = None
@@ -140,6 +151,8 @@ class CasoPublic(BaseModel):
     beneficiarios: list[str]
     tags: list[str]
     flujo: FlujoPasos
+    prompts: list[RecursoTexto]
+    skills: list[RecursoTexto]
     etapa_actual: CasoEtapa
     estado: CasoEstado
     visible_publico: bool

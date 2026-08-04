@@ -57,6 +57,10 @@ Table casos {
   // { "entradas": string[], "pasos": string[], "salidas": string[] }
   flujo jsonb [not null, default: '{"entradas":[],"pasos":[],"salidas":[]}']
 
+  // [{ "titulo": string, "contenido": string }, ...] — orden = índice
+  prompts jsonb [not null, default: '[]']
+  skills jsonb [not null, default: '[]']
+
   etapa_actual caso_etapa [not null, default: 'identificacion']
   estado caso_estado [not null, default: 'enproceso']
   visible_publico boolean [not null, default: false]

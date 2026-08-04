@@ -3,10 +3,12 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 import type { AssistSuggestion, CasoAdmin, CasoWritePayload } from "@/lib/api/types";
+import { RecursoListEditor } from "@/components/admin/RecursoListEditor";
 import {
   casoFormSchema,
   linesToList,
   listToLines,
+  normalizeRecursos,
   type CasoFormValues,
 } from "@/lib/admin/casoFormSchema";
 
@@ -62,6 +64,8 @@ function emptyForm(): CasoFormValues {
     flujoEntradas: "",
     flujoPasos: "",
     flujoSalidas: "",
+    prompts: [],
+    skills: [],
     etapa_actual: "identificacion",
     estado: "enproceso",
     visible_publico: false,
@@ -95,6 +99,14 @@ function fromCaso(caso: CasoAdmin): CasoFormValues {
     flujoEntradas: listToLines(caso.flujo.entradas),
     flujoPasos: listToLines(caso.flujo.pasos),
     flujoSalidas: listToLines(caso.flujo.salidas),
+    prompts: (caso.prompts ?? []).map((item) => ({
+      titulo: item.titulo,
+      contenido: item.contenido,
+    })),
+    skills: (caso.skills ?? []).map((item) => ({
+      titulo: item.titulo,
+      contenido: item.contenido,
+    })),
     etapa_actual: caso.etapa_actual,
     estado: caso.estado,
     visible_publico: caso.visible_publico,
@@ -130,6 +142,8 @@ function toPayload(values: CasoFormValues): CasoWritePayload {
       pasos: linesToList(values.flujoPasos),
       salidas: linesToList(values.flujoSalidas),
     },
+    prompts: normalizeRecursos(values.prompts),
+    skills: normalizeRecursos(values.skills),
     etapa_actual: values.etapa_actual,
     estado: values.estado,
     visible_publico: values.visible_publico,
@@ -590,6 +604,24 @@ function CasoEditorInner({ initial }: CasoEditorProps): React.ReactElement {
             </Field>
           </div>
         </fieldset>
+
+        <RecursoListEditor
+          label="Prompts personalizados"
+          description="Prompts que el champion diseñó o afinó. Usa ↑↓ para ordenar; el orden se muestra en el marketplace."
+          items={form.prompts}
+          onChange={(items) => setField("prompts", items)}
+          addLabel="+ Añadir prompt"
+          emptyHint="Aún no hay prompts. Añade los que quieras compartir con otros equipos."
+        />
+
+        <RecursoListEditor
+          label="Skills"
+          description="Skills o instrucciones reutilizables del caso. Misma lógica de orden y copia en la ficha pública."
+          items={form.skills}
+          onChange={(items) => setField("skills", items)}
+          addLabel="+ Añadir skill"
+          emptyHint="Aún no hay skills documentadas."
+        />
 
         <fieldset className="rounded-xl border border-ink-muted/10 p-4">
           <legend className="px-1 text-sm font-semibold text-brand">Métricas</legend>

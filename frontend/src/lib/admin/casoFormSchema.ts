@@ -6,6 +6,11 @@ export const flujoSchema = z.object({
   salidas: z.array(z.string()),
 });
 
+export const recursoTextoSchema = z.object({
+  titulo: z.string().max(255),
+  contenido: z.string().max(50000),
+});
+
 export const casoFormSchema = z.object({
   codigo: z.string().max(64).optional().nullable(),
   slug: z.string().max(255).optional().nullable(),
@@ -25,6 +30,8 @@ export const casoFormSchema = z.object({
   flujoEntradas: z.string().default(""),
   flujoPasos: z.string().default(""),
   flujoSalidas: z.string().default(""),
+  prompts: z.array(recursoTextoSchema).default([]),
+  skills: z.array(recursoTextoSchema).default([]),
   etapa_actual: z.enum(["identificacion", "diseno", "implementacion", "marketplace"]),
   estado: z.enum(["enproceso", "implementado", "publicado"]),
   visible_publico: z.boolean(),
@@ -38,6 +45,7 @@ export const casoFormSchema = z.object({
 });
 
 export type CasoFormValues = z.infer<typeof casoFormSchema>;
+export type RecursoTextoForm = z.infer<typeof recursoTextoSchema>;
 
 export function linesToList(text: string): string[] {
   return text
@@ -48,4 +56,16 @@ export function linesToList(text: string): string[] {
 
 export function listToLines(items: string[] | null | undefined): string {
   return (items ?? []).join("\n");
+}
+
+/** Descarta filas vacías; exige título y contenido en las que se envían. */
+export function normalizeRecursos(
+  items: RecursoTextoForm[],
+): { titulo: string; contenido: string }[] {
+  return items
+    .map((item) => ({
+      titulo: item.titulo.trim(),
+      contenido: item.contenido.trim(),
+    }))
+    .filter((item) => item.titulo.length > 0 && item.contenido.length > 0);
 }

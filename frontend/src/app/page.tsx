@@ -1,24 +1,19 @@
 import { CasoGrid } from "@/components/CasoGrid";
-import { fetchCasosPublic, fetchTags } from "@/lib/api/public";
+import { fetchCasosPublic } from "@/lib/api/public";
 import type { CasoPublic } from "@/lib/api/types";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 
-async function loadHomeData(): Promise<{ casos: CasoPublic[]; tags: string[] }> {
+async function loadHomeData(): Promise<CasoPublic[]> {
   try {
-    const [casosPage, tags] = await Promise.all([
-      fetchCasosPublic({ page_size: 100 }),
-      fetchTags(),
-    ]);
-    const hasEnProceso = casosPage.items.some((c) => c.estado === "enproceso");
-    const filterTags = hasEnProceso ? ["enproceso", ...tags] : tags;
-    return { casos: casosPage.items, tags: filterTags };
+    const casosPage = await fetchCasosPublic({ page_size: 100 });
+    return casosPage.items;
   } catch {
-    return { casos: [], tags: [] };
+    return [];
   }
 }
 
 export default async function HomePage(): Promise<React.ReactElement> {
-  const { casos, tags } = await loadHomeData();
+  const casos = await loadHomeData();
 
   return (
     <>
@@ -46,7 +41,7 @@ export default async function HomePage(): Promise<React.ReactElement> {
       </section>
 
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-        <CasoGrid casos={casos} tags={tags} />
+        <CasoGrid casos={casos} />
       </div>
     </>
   );

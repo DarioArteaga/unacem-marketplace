@@ -3,12 +3,10 @@
 import { useMemo, useState } from "react";
 import { CasoCard } from "@/components/CasoCard";
 import { ChampionCard } from "@/components/ChampionCard";
-import { TagFilter } from "@/components/TagFilter";
 import type { CasoPublic } from "@/lib/api/types";
 
 type CasoGridProps = {
   casos: CasoPublic[];
-  tags: string[];
 };
 
 type ChampionGroup = {
@@ -39,21 +37,10 @@ function groupByChampion(casos: CasoPublic[]): ChampionGroup[] {
   );
 }
 
-export function CasoGrid({ casos, tags }: CasoGridProps): React.ReactElement {
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+export function CasoGrid({ casos }: CasoGridProps): React.ReactElement {
   const [selectedChampion, setSelectedChampion] = useState<string | null>(null);
 
-  const filtered = useMemo(() => {
-    if (!activeTag) {
-      return casos;
-    }
-    if (activeTag === "enproceso") {
-      return casos.filter((caso) => caso.estado === "enproceso");
-    }
-    return casos.filter((caso) => caso.tags.includes(activeTag));
-  }, [activeTag, casos]);
-
-  const groups = useMemo(() => groupByChampion(filtered), [filtered]);
+  const groups = useMemo(() => groupByChampion(casos), [casos]);
   const activeGroup = useMemo(
     () => groups.find((group) => group.champion === selectedChampion) ?? null,
     [groups, selectedChampion],
@@ -62,18 +49,15 @@ export function CasoGrid({ casos, tags }: CasoGridProps): React.ReactElement {
 
   return (
     <section aria-labelledby="casos-heading" className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 id="casos-heading" className="font-serif text-2xl font-semibold text-brand">
-            {showingCases && activeGroup ? activeGroup.champion : "Champions"}
-          </h2>
-          <p className="mt-1 text-sm text-ink-muted">
-            {showingCases && activeGroup
-              ? activeGroup.areas.join(" · ")
-              : "Elige un champion para ver sus casos. También puedes filtrar por área o tema."}
-          </p>
-        </div>
-        <TagFilter tags={tags} activeTag={activeTag} onChange={setActiveTag} />
+      <div>
+        <h2 id="casos-heading" className="font-serif text-2xl font-semibold text-brand">
+          {showingCases && activeGroup ? activeGroup.champion : "Champions"}
+        </h2>
+        <p className="mt-1 text-sm text-ink-muted">
+          {showingCases && activeGroup
+            ? activeGroup.areas.join(" · ")
+            : "Elige un champion para ver sus casos."}
+        </p>
       </div>
 
       {showingCases ? (
@@ -87,7 +71,7 @@ export function CasoGrid({ casos, tags }: CasoGridProps): React.ReactElement {
           </button>
           {!activeGroup || activeGroup.casos.length === 0 ? (
             <p className="rounded-xl bg-white px-4 py-8 text-center text-ink-muted ring-1 ring-ink-muted/10">
-              Este champion no tiene casos con esa etiqueta.
+              Este champion no tiene casos publicados.
             </p>
           ) : (
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

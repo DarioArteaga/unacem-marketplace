@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-08-04] [FEAT] Prompts y skills en editor admin (lista ordenable ↑↓) y ficha pública (acordeón + copiar); se retira el filtro por chips de tags en home.
+  Archivos modificados: frontend/src/lib/api/types.ts, frontend/src/lib/admin/casoFormSchema.ts, frontend/src/components/admin/CasoEditor.tsx, frontend/src/components/admin/RecursoListEditor.tsx, frontend/src/components/RecursosCaso.tsx, frontend/src/app/casos/[slug]/page.tsx, frontend/src/components/CasoGrid.tsx, frontend/src/app/page.tsx, docs/changelog_frontend.md
+
 - [2026-07-21] [FIX] Asistente LLM: feedback al aplicar campo (aviso + botón «Aplicado ✓»).
   Archivos modificados: frontend/src/components/admin/CasoEditor.tsx, docs/changelog_frontend.md
 

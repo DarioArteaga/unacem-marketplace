@@ -17,6 +17,8 @@ Los casos viven en PostgreSQL como campos tipados (descripción, problema, valor
 
 `flujo` es JSON `{ entradas[], pasos[], salidas[] }`. El front lo dibuja; no hay Mermaid.
 
+`prompts` y `skills` son JSON `[{ titulo, contenido }, ...]`. El orden público es el índice del array (reordenable en admin con ↑↓). La home no filtra por chips de tags: demasiada saturación; los tags siguen en la ficha del caso.
+
 ### Avance y estado (conviven)
 
 - `etapa_actual`: identificacion | diseno | implementacion | marketplace (25% cada una; badge público).

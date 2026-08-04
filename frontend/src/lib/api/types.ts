@@ -12,6 +12,12 @@ export type FlujoPasos = {
   salidas: string[];
 };
 
+/** Prompt o skill del champion (orden = índice en el array). */
+export type RecursoTexto = {
+  titulo: string;
+  contenido: string;
+};
+
 export type EtapaChecklistItem = {
   key: CasoEtapa;
   label: string;
@@ -36,6 +42,8 @@ export type CasoPublic = {
   beneficiarios: string[];
   tags: string[];
   flujo: FlujoPasos;
+  prompts: RecursoTexto[];
+  skills: RecursoTexto[];
   etapa_actual: CasoEtapa;
   estado: CasoEstado;
   visible_publico: boolean;
@@ -119,6 +127,8 @@ export type CasoWritePayload = {
   beneficiarios?: string[];
   tags?: string[];
   flujo?: FlujoPasos;
+  prompts?: RecursoTexto[];
+  skills?: RecursoTexto[];
   etapa_actual?: CasoEtapa;
   estado?: CasoEstado;
   visible_publico?: boolean;

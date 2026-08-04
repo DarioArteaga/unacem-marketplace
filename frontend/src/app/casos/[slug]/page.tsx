@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AvanceCard } from "@/components/AvanceCard";
 import { FlujoPasos } from "@/components/FlujoPasos";
 import { MetricasCaso } from "@/components/MetricasCaso";
+import { RecursosCaso } from "@/components/RecursosCaso";
 import { TagBadge } from "@/components/TagBadge";
 import { fetchCasoBySlug, fetchCasoSlugs } from "@/lib/api/public";
 import { formatEtapaLabel } from "@/lib/etapa";
@@ -130,6 +131,17 @@ export default async function CasoPage({ params }: CasoPageProps): Promise<React
             <h2 className="mb-3 font-serif text-2xl font-semibold text-brand">El flujo</h2>
             <FlujoPasos flujo={caso.flujo} />
           </section>
+
+          <RecursosCaso
+            title="Prompts personalizados"
+            items={caso.prompts ?? []}
+            description="Copia y adapta los prompts que el champion usó en este caso."
+          />
+          <RecursosCaso
+            title="Skills"
+            items={caso.skills ?? []}
+            description="Skills e instrucciones reutilizables compartidas por el champion."
+          />
 
           <MetricasCaso caso={caso} />
         </div>

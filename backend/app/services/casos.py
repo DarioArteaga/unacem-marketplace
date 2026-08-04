@@ -17,6 +17,7 @@ from app.schemas.caso import (
     CasoUpdate,
     ChampionSummary,
     FlujoPasos,
+    RecursoTexto,
     compute_avance_pct,
     compute_checklist,
     compute_dias_activo,
@@ -32,6 +33,25 @@ def _flujo_from_db(raw: dict | None) -> FlujoPasos:
         pasos=list(raw.get("pasos") or []),
         salidas=list(raw.get("salidas") or []),
     )
+
+
+def _recursos_from_db(raw: object) -> list[RecursoTexto]:
+    if not isinstance(raw, list):
+        return []
+    items: list[RecursoTexto] = []
+    for entry in raw:
+        if not isinstance(entry, dict):
+            continue
+        titulo = str(entry.get("titulo") or "").strip()
+        contenido = str(entry.get("contenido") or "").strip()
+        if not titulo or not contenido:
+            continue
+        items.append(RecursoTexto(titulo=titulo[:255], contenido=contenido[:50000]))
+    return items
+
+
+def _recursos_to_db(items: list[RecursoTexto]) -> list[dict[str, str]]:
+    return [item.model_dump() for item in items]
 
 
 def caso_to_public(caso: Caso) -> CasoPublic:
@@ -53,6 +73,8 @@ def caso_to_public(caso: Caso) -> CasoPublic:
         beneficiarios=list(caso.beneficiarios or []),
         tags=list(caso.tags or []),
         flujo=_flujo_from_db(caso.flujo if isinstance(caso.flujo, dict) else None),
+        prompts=_recursos_from_db(caso.prompts),
+        skills=_recursos_from_db(caso.skills),
         etapa_actual=caso.etapa_actual,
         estado=caso.estado,
         visible_publico=caso.visible_publico,
@@ -218,6 +240,8 @@ def create_caso(db: Session, data: CasoCreate, owner: User) -> Caso:
         beneficiarios=data.beneficiarios,
         tags=data.tags,
         flujo=data.flujo.model_dump(),
+        prompts=_recursos_to_db(data.prompts),
+        skills=_recursos_to_db(data.skills),
         etapa_actual=data.etapa_actual,
         estado=data.estado,
         visible_publico=data.visible_publico,
@@ -264,6 +288,14 @@ def update_caso(db: Session, caso: Caso, data: CasoUpdate) -> Caso:
     if "flujo" in payload and payload["flujo"] is not None:
         flujo = payload["flujo"]
         payload["flujo"] = flujo if isinstance(flujo, dict) else FlujoPasos(**flujo).model_dump()
+    for list_key in ("prompts", "skills"):
+        if list_key in payload and payload[list_key] is not None:
+            raw_list = payload[list_key]
+            items = [
+                RecursoTexto.model_validate(item) if not isinstance(item, RecursoTexto) else item
+                for item in raw_list
+            ]
+            payload[list_key] = _recursos_to_db(items)
 
     for key, value in payload.items():
         if key in _TEXT_FIELDS and value == "":

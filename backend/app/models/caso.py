@@ -37,6 +37,10 @@ def default_flujo() -> dict[str, list[str]]:
     return {"entradas": [], "pasos": [], "salidas": []}
 
 
+def default_recursos() -> list[dict[str, str]]:
+    return []
+
+
 class Caso(Base):
     __tablename__ = "casos"
 
@@ -63,6 +67,13 @@ class Caso(Base):
     tags: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False, default=list)
 
     flujo: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=default_flujo)
+    # [{ "titulo": str, "contenido": str }, ...] — orden = posición en la lista
+    prompts: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSONB, nullable=False, default=default_recursos
+    )
+    skills: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSONB, nullable=False, default=default_recursos
+    )
 
     etapa_actual: Mapped[CasoEtapa] = mapped_column(
         Enum(CasoEtapa, name="caso_etapa", values_callable=lambda x: [e.value for e in x]),
