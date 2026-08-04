@@ -58,7 +58,22 @@ export default async function AdminDashboardPage(): Promise<React.ReactElement> 
             <tbody>
               {data.items.map((caso) => (
                 <tr key={caso.id} className="border-b border-ink-muted/5 last:border-0">
-                  <td className="px-4 py-3 font-medium text-ink">{caso.titulo}</td>
+                  <td className="px-4 py-3 font-medium text-ink">
+                    {caso.visible_publico ? (
+                      <Link
+                        href={`/casos/${caso.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-brand-accent"
+                      >
+                        {caso.titulo}
+                      </Link>
+                    ) : (
+                      <span title="Publica el caso para verlo en el marketplace">
+                        {caso.titulo}
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-ink-muted">{caso.champion}</td>
                   <td className="px-4 py-3">
                     {caso.avance_pct}% · {formatEtapaLabel(caso.etapa_actual)}

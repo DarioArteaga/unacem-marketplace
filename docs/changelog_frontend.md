@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-08-04] [FEAT] Admin lista de casos: el título publicado enlaza a la ficha pública (`/casos/[slug]`) en pestaña nueva.
+  Archivos modificados: frontend/src/app/admin/page.tsx, docs/changelog_frontend.md
+
 - [2026-08-04] [FIX] Asistente admin: aviso si la sugerencia llega vacía; limpia resultado previo ante error del BFF.
   Archivos modificados: frontend/src/components/admin/CasoEditor.tsx, docs/changelog_frontend.md
 
