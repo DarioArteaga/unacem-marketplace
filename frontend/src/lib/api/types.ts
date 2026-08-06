@@ -6,6 +6,10 @@ export type CasoEtapa =
 
 export type CasoEstado = "enproceso" | "implementado" | "publicado";
 
+export type CasoCoach = "jhonatan" | "dario";
+
+export type CasoOla = "ola_1" | "ola_2" | "ola_3";
+
 export type FlujoPasos = {
   entradas: string[];
   pasos: string[];
@@ -32,6 +36,8 @@ export type CasoPublic = {
   resumen: string;
   champion: string;
   area: string;
+  coach: CasoCoach | null;
+  ola: CasoOla | null;
   descripcion: string | null;
   problema: string | null;
   valor_esperado: string | null;
@@ -117,6 +123,8 @@ export type CasoWritePayload = {
   resumen: string;
   champion: string;
   area: string;
+  coach?: CasoCoach | null;
+  ola?: CasoOla | null;
   descripcion?: string | null;
   problema?: string | null;
   valor_esperado?: string | null;
@@ -131,6 +139,7 @@ export type CasoWritePayload = {
   skills?: RecursoTexto[];
   etapa_actual?: CasoEtapa;
   estado?: CasoEstado;
+  avance_pct?: number;
   visible_publico?: boolean;
   adopcion_nivel?: string | null;
   adopcion_detalle?: string | null;

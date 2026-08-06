@@ -85,8 +85,7 @@ export function AvanceCard({ caso }: AvanceCardProps): React.ReactElement {
       </dl>
 
       <p className="mt-4 text-xs text-ink-muted">
-        El avance es proporcional a la etapa:{" "}
-        <span className="font-medium text-ink">4 etapas · 25% cada una.</span>
+        El % de avance lo define el coach; la etapa es un estado aparte.
       </p>
     </aside>
   );

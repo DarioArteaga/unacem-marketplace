@@ -41,6 +41,17 @@ export default async function HomePage(): Promise<React.ReactElement> {
       </section>
 
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-ink-muted">
+            {casos.length} {casos.length === 1 ? "caso publicado" : "casos publicados"}
+          </p>
+          <a
+            href="/api/casos/export-pdf"
+            className="inline-flex items-center gap-2 rounded-lg border border-ink-muted/20 bg-surface px-4 py-2 text-sm font-medium text-ink transition hover:border-brand/40 hover:text-brand"
+          >
+            Descargar catálogo (PDF)
+          </a>
+        </div>
         <CasoGrid casos={casos} />
       </div>
     </>

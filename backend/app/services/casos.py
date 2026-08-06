@@ -18,7 +18,6 @@ from app.schemas.caso import (
     ChampionSummary,
     FlujoPasos,
     RecursoTexto,
-    compute_avance_pct,
     compute_checklist,
     compute_dias_activo,
 )
@@ -63,6 +62,8 @@ def caso_to_public(caso: Caso) -> CasoPublic:
         resumen=caso.resumen,
         champion=caso.champion,
         area=caso.area,
+        coach=caso.coach,
+        ola=caso.ola,
         descripcion=caso.descripcion,
         problema=caso.problema,
         valor_esperado=caso.valor_esperado,
@@ -87,7 +88,7 @@ def caso_to_public(caso: Caso) -> CasoPublic:
         fecha_identificado=caso.fecha_identificado,
         created_at=caso.created_at,
         updated_at=caso.updated_at,
-        avance_pct=compute_avance_pct(caso.etapa_actual),
+        avance_pct=caso.avance_pct,
         etapas_checklist=compute_checklist(caso.etapa_actual),
         dias_activo=compute_dias_activo(caso.fecha_identificado),
     )
@@ -147,6 +148,15 @@ def list_public_casos(
             total=total,
             total_pages=max(1, math.ceil(total / page_size)) if total else 0,
         ),
+    )
+
+
+def list_public_casos_raw(db: Session) -> list[Caso]:
+    """Todos los casos publicados, sin paginar. Uso interno (ej. export a PDF)."""
+    return list(
+        db.scalars(
+            select(Caso).where(Caso.visible_publico.is_(True)).order_by(Caso.area, Caso.titulo)
+        ).all()
     )
 
 
@@ -229,6 +239,8 @@ def create_caso(db: Session, data: CasoCreate, owner: User) -> Caso:
         resumen=data.resumen,
         champion=data.champion,
         area=data.area,
+        coach=data.coach,
+        ola=data.ola,
         owner_user_id=owner.id,
         descripcion=data.descripcion,
         problema=data.problema,
@@ -244,6 +256,7 @@ def create_caso(db: Session, data: CasoCreate, owner: User) -> Caso:
         skills=_recursos_to_db(data.skills),
         etapa_actual=data.etapa_actual,
         estado=data.estado,
+        avance_pct=data.avance_pct,
         visible_publico=data.visible_publico,
         adopcion_nivel=data.adopcion_nivel,
         adopcion_detalle=data.adopcion_detalle,

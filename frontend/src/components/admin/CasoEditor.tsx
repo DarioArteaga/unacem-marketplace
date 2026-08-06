@@ -52,6 +52,8 @@ function emptyForm(): CasoFormValues {
     resumen: "",
     champion: "",
     area: "",
+    coach: null,
+    ola: null,
     descripcion: "",
     problema: "",
     valor_esperado: "",
@@ -68,6 +70,7 @@ function emptyForm(): CasoFormValues {
     skills: [],
     etapa_actual: "identificacion",
     estado: "enproceso",
+    avance_pct: 25,
     visible_publico: false,
     adopcion_nivel: "",
     adopcion_detalle: "",
@@ -87,6 +90,8 @@ function fromCaso(caso: CasoAdmin): CasoFormValues {
     resumen: caso.resumen,
     champion: caso.champion,
     area: caso.area,
+    coach: caso.coach,
+    ola: caso.ola,
     descripcion: caso.descripcion ?? "",
     problema: caso.problema ?? "",
     valor_esperado: caso.valor_esperado ?? "",
@@ -109,6 +114,7 @@ function fromCaso(caso: CasoAdmin): CasoFormValues {
     })),
     etapa_actual: caso.etapa_actual,
     estado: caso.estado,
+    avance_pct: caso.avance_pct,
     visible_publico: caso.visible_publico,
     adopcion_nivel: caso.adopcion_nivel ?? "",
     adopcion_detalle: caso.adopcion_detalle ?? "",
@@ -128,6 +134,8 @@ function toPayload(values: CasoFormValues): CasoWritePayload {
     resumen: values.resumen,
     champion: values.champion,
     area: values.area,
+    coach: values.coach || null,
+    ola: values.ola || null,
     descripcion: values.descripcion || null,
     problema: values.problema || null,
     valor_esperado: values.valor_esperado || null,
@@ -146,6 +154,7 @@ function toPayload(values: CasoFormValues): CasoWritePayload {
     skills: normalizeRecursos(values.skills),
     etapa_actual: values.etapa_actual,
     estado: values.estado,
+    avance_pct: values.avance_pct,
     visible_publico: values.visible_publico,
     adopcion_nivel: values.adopcion_nivel || null,
     adopcion_detalle: values.adopcion_detalle || null,
@@ -490,6 +499,38 @@ function CasoEditorInner({ initial }: CasoEditorProps): React.ReactElement {
             />
           </Field>
         </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field label="Coach">
+            <select
+              value={form.coach ?? ""}
+              onChange={(e) =>
+                setField(
+                  "coach",
+                  (e.target.value || null) as CasoFormValues["coach"],
+                )
+              }
+              className={inputClass}
+            >
+              <option value="">Sin asignar</option>
+              <option value="jhonatan">Jhonatan</option>
+              <option value="dario">Darío</option>
+            </select>
+          </Field>
+          <Field label="Ola">
+            <select
+              value={form.ola ?? ""}
+              onChange={(e) =>
+                setField("ola", (e.target.value || null) as CasoFormValues["ola"])
+              }
+              className={inputClass}
+            >
+              <option value="">Sin asignar</option>
+              <option value="ola_1">Ola 1</option>
+              <option value="ola_2">Ola 2</option>
+              <option value="ola_3">Ola 3</option>
+            </select>
+          </Field>
+        </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Field label="Código">
             <input
@@ -542,6 +583,34 @@ function CasoEditorInner({ initial }: CasoEditorProps): React.ReactElement {
             </select>
           </Field>
         </div>
+
+        <Field label={`Avance (%) — libre, no depende de la etapa`}>
+          <div className="mt-1 flex items-center gap-3">
+            <input
+              type="range"
+              min={0}
+              max={100}
+              step={5}
+              value={form.avance_pct}
+              onChange={(e) => setField("avance_pct", Number(e.target.value))}
+              className="w-full accent-brand"
+            />
+            <input
+              type="number"
+              min={0}
+              max={100}
+              value={form.avance_pct}
+              onChange={(e) =>
+                setField(
+                  "avance_pct",
+                  Math.min(100, Math.max(0, Number(e.target.value) || 0)),
+                )
+              }
+              className="w-20 shrink-0 rounded-lg border border-ink-muted/20 bg-surface-muted px-2 py-1 text-sm text-ink"
+            />
+            <span className="shrink-0 text-sm font-medium text-ink-muted">%</span>
+          </div>
+        </Field>
 
         {(
           [

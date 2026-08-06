@@ -1,6 +1,6 @@
-type ChampionCardProps = {
-  champion: string;
-  areas: string[];
+type GroupCardProps = {
+  title: string;
+  subtitle: string;
   caseCount: number;
   onSelect: () => void;
 };
@@ -9,12 +9,12 @@ function caseCountLabel(count: number): string {
   return count === 1 ? "1 caso" : `${count} casos`;
 }
 
-export function ChampionCard({
-  champion,
-  areas,
+export function GroupCard({
+  title,
+  subtitle,
   caseCount,
   onSelect,
-}: ChampionCardProps): React.ReactElement {
+}: GroupCardProps): React.ReactElement {
   return (
     <button
       type="button"
@@ -23,13 +23,13 @@ export function ChampionCard({
     >
       <div className="mb-3 flex items-start justify-between gap-3">
         <h3 className="font-serif text-xl font-semibold text-brand transition-colors group-hover:text-brand-accent group-focus-visible:text-brand-accent">
-          {champion}
+          {title}
         </h3>
         <span className="shrink-0 rounded-full bg-brand px-2.5 py-1 text-xs font-medium text-white">
           {caseCountLabel(caseCount)}
         </span>
       </div>
-      <p className="mb-4 flex-1 text-sm leading-relaxed text-ink-muted">{areas.join(" · ")}</p>
+      <p className="mb-4 flex-1 text-sm leading-relaxed text-ink-muted">{subtitle}</p>
       <span className="text-sm font-medium text-brand transition group-hover:text-brand-accent">
         Ver casos →
       </span>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { fetchAdminCasos, fetchMe } from "@/lib/api/serverAdmin";
-import { formatEtapaLabel } from "@/lib/etapa";
+import { formatCoachLabel, formatEtapaLabel, formatOlaLabel } from "@/lib/etapa";
 
 export default async function AdminDashboardPage(): Promise<React.ReactElement> {
   const user = await fetchMe();
@@ -50,6 +50,8 @@ export default async function AdminDashboardPage(): Promise<React.ReactElement> 
               <tr>
                 <th className="px-4 py-3">Título</th>
                 <th className="px-4 py-3">Champion</th>
+                <th className="px-4 py-3">Coach</th>
+                <th className="px-4 py-3">Ola</th>
                 <th className="px-4 py-3">Etapa</th>
                 <th className="px-4 py-3">Público</th>
                 <th className="px-4 py-3" />
@@ -75,6 +77,8 @@ export default async function AdminDashboardPage(): Promise<React.ReactElement> 
                     )}
                   </td>
                   <td className="px-4 py-3 text-ink-muted">{caso.champion}</td>
+                  <td className="px-4 py-3 text-ink-muted">{formatCoachLabel(caso.coach)}</td>
+                  <td className="px-4 py-3 text-ink-muted">{formatOlaLabel(caso.ola)}</td>
                   <td className="px-4 py-3">
                     {caso.avance_pct}% · {formatEtapaLabel(caso.etapa_actual)}
                   </td>

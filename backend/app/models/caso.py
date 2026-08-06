@@ -5,7 +5,7 @@ import uuid
 from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import Boolean, Date, DateTime, Enum, ForeignKey, String, Text, func
+from sqlalchemy import Boolean, Date, DateTime, Enum, ForeignKey, Integer, String, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -23,6 +23,17 @@ class CasoEstado(str, enum.Enum):
     enproceso = "enproceso"
     implementado = "implementado"
     publicado = "publicado"
+
+
+class CasoCoach(str, enum.Enum):
+    jhonatan = "jhonatan"
+    dario = "dario"
+
+
+class CasoOla(str, enum.Enum):
+    ola_1 = "ola_1"
+    ola_2 = "ola_2"
+    ola_3 = "ola_3"
 
 
 ETAPA_ORDER: list[CasoEtapa] = [
@@ -51,6 +62,14 @@ class Caso(Base):
     resumen: Mapped[str] = mapped_column(String(140), nullable=False)
     champion: Mapped[str] = mapped_column(String(255), nullable=False)
     area: Mapped[str] = mapped_column(String(255), nullable=False)
+    coach: Mapped[CasoCoach | None] = mapped_column(
+        Enum(CasoCoach, name="caso_coach", values_callable=lambda x: [e.value for e in x]),
+        nullable=True,
+    )
+    ola: Mapped[CasoOla | None] = mapped_column(
+        Enum(CasoOla, name="caso_ola", values_callable=lambda x: [e.value for e in x]),
+        nullable=True,
+    )
     owner_user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True
     )
@@ -86,6 +105,8 @@ class Caso(Base):
         default=CasoEstado.enproceso,
     )
     visible_publico: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    # Editable libremente por el coach; ya no se deriva automáticamente de etapa_actual.
+    avance_pct: Mapped[int] = mapped_column(Integer, nullable=False, default=25)
 
     adopcion_nivel: Mapped[str | None] = mapped_column(String(64), nullable=True)
     adopcion_detalle: Mapped[str | None] = mapped_column(Text, nullable=True)

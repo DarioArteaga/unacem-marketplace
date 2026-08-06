@@ -1,5 +1,8 @@
 # Changelog Backend
 
+- [2026-08-06] [FEAT] Casos: campos `coach` (enum jhonatan/dario) y `ola` (enum ola_1/2/3); `avance_pct` pasa de derivado (25/50/75/100 según etapa) a columna editable libre (0-100). Migración Alembic `003` con backfill del valor previo. Endpoint `GET /api/v1/casos/export.pdf`: descarga consolidada del catálogo público en PDF (reportlab, licencia BSD).
+  Archivos modificados: backend/app/models/caso.py, backend/app/schemas/caso.py, backend/app/services/casos.py, backend/app/services/pdf.py, backend/app/api/v1/casos_public.py, backend/alembic/versions/003_casos_coach_ola_avance.py, backend/requirements.txt, docs/schema.dbml, docs/architecture_decisions.md, docs/changelog_backend.md
+
 - [2026-08-04] [FIX] Asistente: `max_tokens` 4096, campos de salida acotados, y error 502 visible si el JSON llega truncado/vacío (antes devolvía 200 vacío).
   Archivos modificados: backend/app/services/assist.py, docs/changelog_backend.md
 

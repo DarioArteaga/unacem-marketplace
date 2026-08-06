@@ -19,6 +19,14 @@ Los casos viven en PostgreSQL como campos tipados (descripción, problema, valor
 
 `prompts` y `skills` son JSON `[{ titulo, contenido }, ...]`. El orden público es el índice del array (reordenable en admin con ↑↓). La home no filtra por chips de tags: demasiada saturación; los tags siguen en la ficha del caso.
 
+### Avance libre + tabs de exploración (2026-08-06)
+
+`avance_pct` deja de derivarse de `etapa_actual` (ya no es fijo 25/50/75/100): es una columna propia, editable en el admin con cualquier valor 0-100. `etapa_actual` se mantiene aparte y sigue alimentando el checklist de 4 etapas; ambos conviven sin acoplarse.
+
+Se agregan `coach` (jhonatan | dario) y `ola` (ola_1 | ola_2 | ola_3) como enums cerrados (no texto libre), porque son catálogos fijos y pequeños — mismo patrón que `etapa_actual`/`estado`.
+
+La home reemplaza el agrupado único por champion por 4 tabs: Área, Coach, Ola y Lista (tabla plana). El PDF consolidado (`GET /api/v1/casos/export.pdf`) se genera en el backend con `reportlab` (BSD) para mantener trazabilidad y evitar dependencias de sistema (se descartó `weasyprint` por requerir Pango/Cairo nativos en Railway).
+
 ### Avance y estado (conviven)
 
 - `etapa_actual`: identificacion | diseno | implementacion | marketplace (25% cada una; badge público).

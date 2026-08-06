@@ -5,7 +5,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.models.caso import CasoEstado, CasoEtapa, ETAPA_ORDER
+from app.models.caso import CasoCoach, CasoEstado, CasoEtapa, CasoOla, ETAPA_ORDER
 
 
 class FlujoPasos(BaseModel):
@@ -63,6 +63,8 @@ class CasoBase(BaseModel):
     resumen: str = Field(min_length=1, max_length=140)
     champion: str = Field(min_length=1, max_length=255)
     area: str = Field(min_length=1, max_length=255)
+    coach: CasoCoach | None = None
+    ola: CasoOla | None = None
     descripcion: str | None = None
     problema: str | None = None
     valor_esperado: str | None = None
@@ -77,6 +79,8 @@ class CasoBase(BaseModel):
     skills: list[RecursoTexto] = Field(default_factory=list)
     etapa_actual: CasoEtapa = CasoEtapa.identificacion
     estado: CasoEstado = CasoEstado.enproceso
+    # Editable libremente por el coach; no está atado a etapa_actual (antes era 25/50/75/100 fijo).
+    avance_pct: int = Field(default=25, ge=0, le=100)
     adopcion_nivel: str | None = None
     adopcion_detalle: str | None = None
     participacion_nivel: str | None = None
@@ -107,6 +111,8 @@ class CasoUpdate(BaseModel):
     resumen: str | None = None
     champion: str | None = None
     area: str | None = None
+    coach: CasoCoach | None = None
+    ola: CasoOla | None = None
     descripcion: str | None = None
     problema: str | None = None
     valor_esperado: str | None = None
@@ -121,6 +127,7 @@ class CasoUpdate(BaseModel):
     skills: list[RecursoTexto] | None = None
     etapa_actual: CasoEtapa | None = None
     estado: CasoEstado | None = None
+    avance_pct: int | None = Field(default=None, ge=0, le=100)
     visible_publico: bool | None = None
     adopcion_nivel: str | None = None
     adopcion_detalle: str | None = None
@@ -141,6 +148,8 @@ class CasoPublic(BaseModel):
     resumen: str
     champion: str
     area: str
+    coach: CasoCoach | None
+    ola: CasoOla | None
     descripcion: str | None
     problema: str | None
     valor_esperado: str | None

@@ -14,3 +14,4 @@ structlog>=24.4.0
 anthropic>=0.40.0
 python-slugify>=8.0.4
 PyYAML>=6.0.2
+reportlab>=4.2.5

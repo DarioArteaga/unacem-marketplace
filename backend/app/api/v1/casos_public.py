@@ -1,12 +1,27 @@
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Response, status
 
 from app.api.deps import DbSession
 from app.models.caso import CasoEstado, CasoEtapa
 from app.schemas.caso import CasoPublic, ChampionSummary
 from app.schemas.common import PaginatedResponse
 from app.services import casos as casos_service
+from app.services.pdf import build_catalog_pdf
 
 router = APIRouter()
+
+
+@router.get("/casos/export.pdf")
+def export_casos_pdf(db: DbSession) -> Response:
+    """Descarga consolidada en PDF del catálogo público de casos. Debe ir antes de /casos/{slug}."""
+    casos = casos_service.list_public_casos_raw(db)
+    pdf_bytes = build_catalog_pdf(casos)
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": 'attachment; filename="catalogo-casos-proyecto-salto.pdf"'
+        },
+    )
 
 
 @router.get("/casos", response_model=PaginatedResponse[CasoPublic])
