@@ -108,6 +108,12 @@ export default async function CasoPage({ params }: CasoPageProps): Promise<React
               </p>
             ) : null}
             <p className="mt-3 text-ink-muted">{caso.resumen}</p>
+            <a
+              href={`/api/casos/${caso.slug}/export-pdf`}
+              className="mt-4 inline-flex items-center gap-2 rounded-lg border border-ink-muted/20 bg-surface px-4 py-2 text-sm font-medium text-ink transition hover:border-brand/40 hover:text-brand"
+            >
+              Descargar ficha (PDF)
+            </a>
           </header>
 
           <Section title="Descripción">

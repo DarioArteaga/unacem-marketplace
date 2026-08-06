@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-08-06] [FEAT] Ficha pública de caso: botón "Descargar ficha (PDF)" vía proxy same-origin `/api/casos/[slug]/export-pdf`.
+  Archivos modificados: frontend/src/app/casos/[slug]/page.tsx, frontend/src/app/api/casos/[slug]/export-pdf/route.ts, docs/changelog_frontend.md
+
 - [2026-08-06] [FEAT] Home con 4 tabs (Área, Coach, Ola, Lista) reemplazando el agrupado único por champion; tab Lista es tabla plana con enlaces directos. Botón "Descargar catálogo (PDF)" vía proxy same-origin. Editor admin: selects de Coach/Ola y avance % editable libre (slider + input numérico, ya no atado a la etapa). Admin lista de casos: columnas Coach/Ola.
   Archivos modificados: frontend/src/lib/api/types.ts, frontend/src/lib/admin/casoFormSchema.ts, frontend/src/lib/etapa.ts, frontend/src/components/admin/CasoEditor.tsx, frontend/src/components/AvanceCard.tsx, frontend/src/components/CasoGrid.tsx, frontend/src/components/GroupCard.tsx (reemplaza ChampionCard.tsx), frontend/src/app/page.tsx, frontend/src/app/admin/page.tsx, frontend/src/app/api/casos/export-pdf/route.ts, docs/changelog_frontend.md
 

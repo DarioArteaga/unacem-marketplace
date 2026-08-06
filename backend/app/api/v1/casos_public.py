@@ -5,7 +5,7 @@ from app.models.caso import CasoEstado, CasoEtapa
 from app.schemas.caso import CasoPublic, ChampionSummary
 from app.schemas.common import PaginatedResponse
 from app.services import casos as casos_service
-from app.services.pdf import build_catalog_pdf
+from app.services.pdf import build_case_pdf, build_catalog_pdf
 
 router = APIRouter()
 
@@ -51,6 +51,20 @@ def get_caso(slug: str, db: DbSession) -> CasoPublic:
     if not caso:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Caso no encontrado")
     return casos_service.caso_to_public(caso)
+
+
+@router.get("/casos/{slug}/export.pdf")
+def export_caso_pdf(slug: str, db: DbSession) -> Response:
+    """Descarga en PDF de la ficha individual de un caso publicado."""
+    caso = casos_service.get_public_by_slug(db, slug)
+    if not caso:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Caso no encontrado")
+    pdf_bytes = build_case_pdf(caso)
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{caso.slug}.pdf"'},
+    )
 
 
 @router.get("/champions", response_model=list[ChampionSummary])
