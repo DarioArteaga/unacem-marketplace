@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AdminCasosTable } from "@/components/admin/AdminCasosTable";
 import { fetchAdminCasos, fetchMe } from "@/lib/api/serverAdmin";
-import { formatCoachLabel, formatEtapaLabel, formatOlaLabel } from "@/lib/etapa";
 
 export default async function AdminDashboardPage(): Promise<React.ReactElement> {
   const user = await fetchMe();
@@ -44,68 +44,7 @@ export default async function AdminDashboardPage(): Promise<React.ReactElement> 
           Aún no hay casos. Crea el primero.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-2xl bg-surface ring-1 ring-ink-muted/10">
-          <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-ink-muted/10 text-xs tracking-wide text-ink-muted uppercase">
-              <tr>
-                <th className="px-4 py-3">Título</th>
-                <th className="px-4 py-3">Champion</th>
-                <th className="px-4 py-3">Coach</th>
-                <th className="px-4 py-3">Ola</th>
-                <th className="px-4 py-3">Etapa</th>
-                <th className="px-4 py-3">Público</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody>
-              {data.items.map((caso) => (
-                <tr key={caso.id} className="border-b border-ink-muted/5 last:border-0">
-                  <td className="px-4 py-3 font-medium text-ink">
-                    {caso.visible_publico ? (
-                      <Link
-                        href={`/casos/${caso.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-brand underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-brand-accent"
-                      >
-                        {caso.titulo}
-                      </Link>
-                    ) : (
-                      <span title="Publica el caso para verlo en el marketplace">
-                        {caso.titulo}
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-ink-muted">{caso.champion}</td>
-                  <td className="px-4 py-3 text-ink-muted">{formatCoachLabel(caso.coach)}</td>
-                  <td className="px-4 py-3 text-ink-muted">{formatOlaLabel(caso.ola)}</td>
-                  <td className="px-4 py-3">
-                    {caso.avance_pct}% · {formatEtapaLabel(caso.etapa_actual)}
-                  </td>
-                  <td className="px-4 py-3">
-                    {caso.visible_publico ? (
-                      <span className="rounded-full bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand">
-                        Publicado
-                      </span>
-                    ) : (
-                      <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-ink-muted">
-                        Borrador
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/admin/casos/${caso.id}`}
-                      className="font-medium text-brand hover:text-brand-accent"
-                    >
-                      Editar
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminCasosTable casos={data.items} />
       )}
     </div>
   );

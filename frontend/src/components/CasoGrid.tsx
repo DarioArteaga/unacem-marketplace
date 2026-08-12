@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CasoCard } from "@/components/CasoCard";
 import { GroupCard } from "@/components/GroupCard";
+import { SelectFilter, TextFilter } from "@/components/TableColumnFilter";
 import { TagBadge } from "@/components/TagBadge";
 import type { CasoPublic } from "@/lib/api/types";
-import { formatCoachLabel, formatEtapaLabel, formatOlaLabel } from "@/lib/etapa";
+import { COACH_LABELS, ETAPA_LABELS, OLA_LABELS, formatCoachLabel, formatEtapaLabel, formatOlaLabel } from "@/lib/etapa";
 
 type CasoGridProps = {
   casos: CasoPublic[];
@@ -208,7 +209,53 @@ function Tabs({
   );
 }
 
+type ListaFilters = {
+  titulo: string;
+  champion: string;
+  area: string;
+  coach: string;
+  ola: string;
+  etapa: string;
+};
+
+const EMPTY_LISTA_FILTERS: ListaFilters = {
+  titulo: "",
+  champion: "",
+  area: "",
+  coach: "",
+  ola: "",
+  etapa: "",
+};
+
 function ListaCasos({ casos }: { casos: CasoPublic[] }): React.ReactElement {
+  const [filters, setFilters] = useState<ListaFilters>(EMPTY_LISTA_FILTERS);
+
+  function setFilter(key: keyof ListaFilters, value: string): void {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  }
+
+  const areaOptions = useMemo(
+    () => Array.from(new Set(casos.map((c) => c.area))).sort((a, b) => a.localeCompare(b, "es")),
+    [casos],
+  );
+
+  const filtered = useMemo(() => {
+    const titulo = filters.titulo.trim().toLowerCase();
+    const champion = filters.champion.trim().toLowerCase();
+    return casos.filter((caso) => {
+      if (titulo && !caso.titulo.toLowerCase().includes(titulo)) return false;
+      if (champion && !caso.champion.toLowerCase().includes(champion)) return false;
+      if (filters.area && caso.area !== filters.area) return false;
+      if (filters.coach && caso.coach !== filters.coach) return false;
+      if (filters.ola && caso.ola !== filters.ola) return false;
+      if (filters.etapa && caso.etapa_actual !== filters.etapa) return false;
+      return true;
+    });
+  }, [casos, filters]);
+
+  const hasActiveFilters = Object.values(filters).some((v) => v !== "");
+  const sorted = [...filtered].sort((a, b) => a.titulo.localeCompare(b.titulo, "es"));
+
   if (casos.length === 0) {
     return (
       <p className="rounded-xl bg-white px-4 py-8 text-center text-ink-muted ring-1 ring-ink-muted/10">
@@ -217,53 +264,111 @@ function ListaCasos({ casos }: { casos: CasoPublic[] }): React.ReactElement {
     );
   }
 
-  const sorted = [...casos].sort((a, b) => a.titulo.localeCompare(b.titulo, "es"));
-
   return (
-    <div className="overflow-x-auto rounded-2xl bg-surface ring-1 ring-ink-muted/10">
-      <table className="min-w-full text-left text-sm">
-        <thead className="border-b border-ink-muted/10 text-xs tracking-wide text-ink-muted uppercase">
-          <tr>
-            <th className="px-4 py-3">Título</th>
-            <th className="px-4 py-3">Resumen</th>
-            <th className="px-4 py-3">Champion</th>
-            <th className="px-4 py-3">Área</th>
-            <th className="px-4 py-3">Coach</th>
-            <th className="px-4 py-3">Ola</th>
-            <th className="px-4 py-3">Etapa</th>
-            <th className="px-4 py-3">Avance</th>
-            <th className="px-4 py-3">Etiquetas</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((caso) => (
-            <tr key={caso.slug} className="border-b border-ink-muted/5 last:border-0">
-              <td className="px-4 py-3 font-medium text-ink">
-                <Link
-                  href={`/casos/${caso.slug}`}
-                  className="text-brand underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-brand-accent"
-                >
-                  {caso.titulo}
-                </Link>
-              </td>
-              <td className="max-w-xs px-4 py-3 text-ink-muted">{caso.resumen}</td>
-              <td className="px-4 py-3 text-ink-muted">{caso.champion}</td>
-              <td className="px-4 py-3 text-ink-muted">{caso.area}</td>
-              <td className="px-4 py-3 text-ink-muted">{formatCoachLabel(caso.coach)}</td>
-              <td className="px-4 py-3 text-ink-muted">{formatOlaLabel(caso.ola)}</td>
-              <td className="px-4 py-3 text-ink-muted">{formatEtapaLabel(caso.etapa_actual)}</td>
-              <td className="px-4 py-3 text-ink-muted">{caso.avance_pct}%</td>
-              <td className="px-4 py-3">
-                <div className="flex flex-wrap gap-1">
-                  {caso.tags.slice(0, 3).map((tag) => (
-                    <TagBadge key={tag} tag={tag} />
-                  ))}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="space-y-3">
+      {hasActiveFilters && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-ink-muted">
+            {sorted.length} de {casos.length} casos
+          </p>
+          <button
+            type="button"
+            onClick={() => setFilters(EMPTY_LISTA_FILTERS)}
+            className="text-sm font-medium text-brand hover:text-brand-accent"
+          >
+            Limpiar filtros
+          </button>
+        </div>
+      )}
+      {sorted.length === 0 ? (
+        <p className="rounded-xl bg-white px-4 py-8 text-center text-ink-muted ring-1 ring-ink-muted/10">
+          Ningún caso coincide con los filtros aplicados.
+        </p>
+      ) : (
+        <div className="overflow-x-auto rounded-2xl bg-surface ring-1 ring-ink-muted/10">
+          <table className="min-w-full text-left text-sm">
+            <thead className="border-b border-ink-muted/10 text-xs tracking-wide text-ink-muted uppercase">
+              <tr>
+                <th className="px-4 py-3 align-top">
+                  Título
+                  <TextFilter label="título" value={filters.titulo} onChange={(v) => setFilter("titulo", v)} />
+                </th>
+                <th className="px-4 py-3">Resumen</th>
+                <th className="px-4 py-3 align-top">
+                  Champion
+                  <TextFilter label="champion" value={filters.champion} onChange={(v) => setFilter("champion", v)} />
+                </th>
+                <th className="px-4 py-3 align-top">
+                  Área
+                  <SelectFilter
+                    label="área"
+                    value={filters.area}
+                    onChange={(v) => setFilter("area", v)}
+                    options={areaOptions.map((a) => ({ value: a, label: a }))}
+                  />
+                </th>
+                <th className="px-4 py-3 align-top">
+                  Coach
+                  <SelectFilter
+                    label="coach"
+                    value={filters.coach}
+                    onChange={(v) => setFilter("coach", v)}
+                    options={Object.entries(COACH_LABELS).map(([value, label]) => ({ value, label }))}
+                  />
+                </th>
+                <th className="px-4 py-3 align-top">
+                  Ola
+                  <SelectFilter
+                    label="ola"
+                    value={filters.ola}
+                    onChange={(v) => setFilter("ola", v)}
+                    options={Object.entries(OLA_LABELS).map(([value, label]) => ({ value, label }))}
+                  />
+                </th>
+                <th className="px-4 py-3 align-top">
+                  Etapa
+                  <SelectFilter
+                    label="etapa"
+                    value={filters.etapa}
+                    onChange={(v) => setFilter("etapa", v)}
+                    options={Object.entries(ETAPA_LABELS).map(([value, label]) => ({ value, label }))}
+                  />
+                </th>
+                <th className="px-4 py-3">Avance</th>
+                <th className="px-4 py-3">Etiquetas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map((caso) => (
+                <tr key={caso.slug} className="border-b border-ink-muted/5 last:border-0">
+                  <td className="px-4 py-3 font-medium text-ink">
+                    <Link
+                      href={`/casos/${caso.slug}`}
+                      className="text-brand underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-brand-accent"
+                    >
+                      {caso.titulo}
+                    </Link>
+                  </td>
+                  <td className="max-w-xs px-4 py-3 text-ink-muted">{caso.resumen}</td>
+                  <td className="px-4 py-3 text-ink-muted">{caso.champion}</td>
+                  <td className="px-4 py-3 text-ink-muted">{caso.area}</td>
+                  <td className="px-4 py-3 text-ink-muted">{formatCoachLabel(caso.coach)}</td>
+                  <td className="px-4 py-3 text-ink-muted">{formatOlaLabel(caso.ola)}</td>
+                  <td className="px-4 py-3 text-ink-muted">{formatEtapaLabel(caso.etapa_actual)}</td>
+                  <td className="px-4 py-3 text-ink-muted">{caso.avance_pct}%</td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-1">
+                      {caso.tags.slice(0, 3).map((tag) => (
+                        <TagBadge key={tag} tag={tag} />
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

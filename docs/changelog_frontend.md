@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-08-12] [FEAT] Filtros por columna en encabezados: admin "Casos" (título, champion, coach, ola, etapa, público) y home "Vista por lista" (título, champion, área, coach, ola, etapa), con contador de resultados y botón "Limpiar filtros". Componentes reutilizables `SelectFilter`/`TextFilter`.
+  Archivos modificados: frontend/src/components/TableColumnFilter.tsx, frontend/src/components/admin/AdminCasosTable.tsx, frontend/src/app/admin/page.tsx, frontend/src/components/CasoGrid.tsx, docs/changelog_frontend.md
+
 - [2026-08-12] [FEAT] Home, tab "Vista por lista": nueva columna "Resumen" (campo `resumen`) para dar una idea rápida del caso sin abrir la ficha.
   Archivos modificados: frontend/src/components/CasoGrid.tsx, docs/changelog_frontend.md
 
