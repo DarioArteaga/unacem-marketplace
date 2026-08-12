@@ -1,5 +1,14 @@
 # Changelog Backend
 
+- [2026-08-12] [FEAT] PDF catálogo: nueva columna "Resumen" (campo `resumen`, ≤140 caracteres) para dar una idea rápida del caso en la tabla; se descartó `descripcion` por ser opcional y de longitud libre, poco apta para una columna de tabla.
+  Archivos modificados: backend/app/services/pdf.py, docs/changelog_backend.md
+
+- [2026-08-06] [FIX] PDF ficha individual: la tabla "El flujo" modelaba Entradas/Pasos/Salidas como filas correlacionadas 1 a 1, generando filas ragged y celdas vacías cuando las listas tenían distinta longitud (no son correspondientes entre sí). Ahora es una sola fila con 3 columnas, cada una con su propia lista numerada, igual al diseño de la ficha web (`FlujoPasos.tsx`). Verificado re-renderizando a imagen con el caso reportado por el usuario.
+  Archivos modificados: backend/app/services/pdf.py, docs/changelog_backend.md
+
+- [2026-08-06] [FIX] Generación de PDF: las celdas de tabla (flujo, métricas, catálogo) usaban strings planos y no hacían word-wrap, desbordando y superponiendo texto largo. Ahora todas usan `Paragraph` con escapado de `&`/`<`/`>`; anchos de columna recalculados para caber en la página. Verificado renderizando a imagen con casos de prueba (texto largo, símbolos especiales).
+  Archivos modificados: backend/app/services/pdf.py, docs/changelog_backend.md
+
 - [2026-08-06] [FEAT] Endpoint `GET /api/v1/casos/{slug}/export.pdf`: ficha individual del caso en PDF (descripción, flujo, métricas), para la vista pública de detalle.
   Archivos modificados: backend/app/services/pdf.py, backend/app/api/v1/casos_public.py, docs/changelog_backend.md
 

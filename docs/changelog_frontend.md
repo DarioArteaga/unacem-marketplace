@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-08-12] [FEAT] Home, tab "Vista por lista": nueva columna "Resumen" (campo `resumen`) para dar una idea rápida del caso sin abrir la ficha.
+  Archivos modificados: frontend/src/components/CasoGrid.tsx, docs/changelog_frontend.md
+
 - [2026-08-06] [FEAT] Ficha pública de caso: botón "Descargar ficha (PDF)" vía proxy same-origin `/api/casos/[slug]/export-pdf`.
   Archivos modificados: frontend/src/app/casos/[slug]/page.tsx, frontend/src/app/api/casos/[slug]/export-pdf/route.ts, docs/changelog_frontend.md
 

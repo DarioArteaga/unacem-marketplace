@@ -225,6 +225,7 @@ function ListaCasos({ casos }: { casos: CasoPublic[] }): React.ReactElement {
         <thead className="border-b border-ink-muted/10 text-xs tracking-wide text-ink-muted uppercase">
           <tr>
             <th className="px-4 py-3">Título</th>
+            <th className="px-4 py-3">Resumen</th>
             <th className="px-4 py-3">Champion</th>
             <th className="px-4 py-3">Área</th>
             <th className="px-4 py-3">Coach</th>
@@ -245,6 +246,7 @@ function ListaCasos({ casos }: { casos: CasoPublic[] }): React.ReactElement {
                   {caso.titulo}
                 </Link>
               </td>
+              <td className="max-w-xs px-4 py-3 text-ink-muted">{caso.resumen}</td>
               <td className="px-4 py-3 text-ink-muted">{caso.champion}</td>
               <td className="px-4 py-3 text-ink-muted">{caso.area}</td>
               <td className="px-4 py-3 text-ink-muted">{formatCoachLabel(caso.coach)}</td>
