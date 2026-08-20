@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CasoCard } from "@/components/CasoCard";
+import { CompletadoBadge } from "@/components/CompletadoBadge";
 import { GroupCard } from "@/components/GroupCard";
 import { SelectFilter, TextFilter } from "@/components/TableColumnFilter";
 import { TagBadge } from "@/components/TagBadge";
@@ -355,7 +356,12 @@ function ListaCasos({ casos }: { casos: CasoPublic[] }): React.ReactElement {
                   <td className="px-4 py-3 text-ink-muted">{formatCoachLabel(caso.coach)}</td>
                   <td className="px-4 py-3 text-ink-muted">{formatOlaLabel(caso.ola)}</td>
                   <td className="px-4 py-3 text-ink-muted">{formatEtapaLabel(caso.etapa_actual)}</td>
-                  <td className="px-4 py-3 text-ink-muted">{caso.avance_pct}%</td>
+                  <td className="px-4 py-3 text-ink-muted">
+                    <span className="inline-flex flex-wrap items-center gap-1.5">
+                      {caso.avance_pct}%
+                      {caso.avance_pct >= 100 ? <CompletadoBadge compact /> : null}
+                    </span>
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
                       {caso.tags.slice(0, 3).map((tag) => (

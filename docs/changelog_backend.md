@@ -1,5 +1,8 @@
 # Changelog Backend
 
+- [2026-08-12] [FEAT] Script `scripts/bulk_set_coach_ola.py` para asignación masiva de coach/ola por título exacto (reporta títulos no encontrados). Ejecutado una vez contra producción para asignar coach=Darío/ola=Ola 2 a 11 casos sin coach/ola asignados.
+  Archivos modificados: backend/scripts/bulk_set_coach_ola.py, docs/changelog_backend.md
+
 - [2026-08-12] [FEAT] PDF catálogo: nueva columna "Resumen" (campo `resumen`, ≤140 caracteres) para dar una idea rápida del caso en la tabla; se descartó `descripcion` por ser opcional y de longitud libre, poco apta para una columna de tabla.
   Archivos modificados: backend/app/services/pdf.py, docs/changelog_backend.md
 
