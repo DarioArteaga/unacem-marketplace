@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { AprendizajePanel } from "@/components/AprendizajePanel";
 import { CasoCard } from "@/components/CasoCard";
 import { CompletadoBadge } from "@/components/CompletadoBadge";
 import { GroupCard } from "@/components/GroupCard";
+import { MetricasUsoDashboard } from "@/components/MetricasUsoDashboard";
 import { SelectFilter, TextFilter } from "@/components/TableColumnFilter";
 import { TagBadge } from "@/components/TagBadge";
 import type { CasoPublic } from "@/lib/api/types";
@@ -14,13 +16,15 @@ type CasoGridProps = {
   casos: CasoPublic[];
 };
 
-type TabKey = "area" | "coach" | "ola" | "lista";
+type TabKey = "area" | "coach" | "ola" | "lista" | "metricas" | "aprendizaje";
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "area", label: "Vista por área" },
   { key: "coach", label: "Vista por coach" },
   { key: "ola", label: "Vista por ola" },
   { key: "lista", label: "Vista por lista" },
+  { key: "metricas", label: "Métricas de uso" },
+  { key: "aprendizaje", label: "Aprendizaje" },
 ];
 
 type Group = {
@@ -95,7 +99,7 @@ export function CasoGrid({ casos }: CasoGridProps): React.ReactElement {
     [casos],
   );
 
-  const groupsByTab: Record<Exclude<TabKey, "lista">, Group[]> = {
+  const groupsByTab: Record<Exclude<TabKey, "lista" | "metricas" | "aprendizaje">, Group[]> = {
     area: areaGroups,
     coach: coachGroups,
     ola: olaGroups,
@@ -111,6 +115,24 @@ export function CasoGrid({ casos }: CasoGridProps): React.ReactElement {
       <section aria-labelledby="casos-heading" className="space-y-6">
         <Tabs active={tab} onChange={changeTab} />
         <ListaCasos casos={casos} />
+      </section>
+    );
+  }
+
+  if (tab === "metricas") {
+    return (
+      <section aria-labelledby="casos-heading" className="space-y-6">
+        <Tabs active={tab} onChange={changeTab} />
+        <MetricasUsoDashboard casos={casos} />
+      </section>
+    );
+  }
+
+  if (tab === "aprendizaje") {
+    return (
+      <section aria-labelledby="casos-heading" className="space-y-6">
+        <Tabs active={tab} onChange={changeTab} />
+        <AprendizajePanel />
       </section>
     );
   }
@@ -187,7 +209,7 @@ function Tabs({
   return (
     <div
       role="tablist"
-      aria-label="Agrupar casos del marketplace"
+      aria-label="Vistas del marketplace"
       className="flex flex-wrap gap-2 border-b border-ink-muted/10 pb-3"
     >
       {TABS.map((t) => (
