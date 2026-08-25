@@ -36,3 +36,4 @@ class User(Base):
     )
 
     casos = relationship("Caso", back_populates="owner")
+    modulos_progreso = relationship("ModuloProgreso", back_populates="user")

@@ -1,5 +1,8 @@
 # Changelog Backend
 
+- [2026-08-25] [FEAT] Módulos de aprendizaje: tablas `modulos_aprendizaje` y `modulos_progreso` (JSONB de visited/quizzes/matrix/reflexiones), migración Alembic `004` con seed del Módulo 9. API autenticada `GET/PUT /api/v1/modulos/{slug}/progreso`.
+  Archivos modificados: backend/app/models/modulo.py, backend/app/models/user.py, backend/app/models/__init__.py, backend/app/schemas/modulo.py, backend/app/services/modulos.py, backend/app/api/v1/modulos.py, backend/app/api/v1/__init__.py, backend/alembic/versions/004_modulos_aprendizaje.py, backend/alembic/env.py, docs/schema.dbml, docs/architecture_decisions.md, docs/index.md, docs/changelog_backend.md
+
 - [2026-08-12] [FEAT] Script `scripts/bulk_set_coach_ola.py` para asignación masiva de coach/ola por título exacto (reporta títulos no encontrados). Ejecutado una vez contra producción para asignar coach=Darío/ola=Ola 2 a 11 casos sin coach/ola asignados.
   Archivos modificados: backend/scripts/bulk_set_coach_ola.py, docs/changelog_backend.md
 

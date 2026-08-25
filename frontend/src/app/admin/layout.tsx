@@ -22,6 +22,9 @@ export default async function AdminLayout({
                 <Link href="/admin" className="hover:text-white">
                   Casos
                 </Link>
+                <Link href="/aprendizaje/modulo-9" className="hover:text-white">
+                  Módulo 9
+                </Link>
                 {(user.role === "coach" || user.role === "super_admin") && (
                   <Link href="/admin/casos/nuevo" className="hover:text-white">
                     Nuevo caso

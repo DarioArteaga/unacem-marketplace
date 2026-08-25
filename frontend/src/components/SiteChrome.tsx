@@ -7,8 +7,9 @@ import { SiteHeader } from "@/components/SiteHeader";
 export function SiteChrome({ children }: { children: React.ReactNode }): React.ReactElement {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
+  const isAprendizaje = pathname.startsWith("/aprendizaje");
 
-  if (isAdmin) {
+  if (isAdmin || isAprendizaje) {
     return <>{children}</>;
   }
 

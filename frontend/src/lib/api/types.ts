@@ -89,6 +89,24 @@ export type Paginated<T> = {
   meta: PaginationMeta;
 };
 
+export type ModuloPublic = {
+  slug: string;
+  titulo: string;
+  duracion_estimada: string;
+  total_pasos: number;
+};
+
+export type ModuloProgreso = {
+  modulo_slug: string;
+  current_step: number;
+  visited: number[];
+  quizzes: Record<string, string>;
+  matrix: Record<string, string>;
+  reflexiones: Record<string, string>;
+  completed_at: string | null;
+  updated_at: string | null;
+};
+
 export type UserPublic = {
   id: string;
   email: string;

@@ -37,6 +37,17 @@ La home reemplaza el agrupado único por champion por 4 tabs: Área, Coach, Ola 
 
 Detalle público: narrativa estructurada + tarjeta de avance + 3 métricas (adopción, participación, percepción de eficiencia). Sin login.
 
+### Módulos de aprendizaje y progreso (2026-08-25)
+
+El Módulo 9 (Pedagogía para entornos digitales) se sirve como HTML estático en el front (`/aprendizaje/modulo-9`). El contenido no va a PostgreSQL: cambia poco y es un artefacto pedagógico, no un caso de uso.
+
+Sí se persiste el **progreso por usuario autenticado**:
+
+- `modulos_aprendizaje`: catálogo (slug, título, pasos). Seed inicial `pedagogia-entornos-digitales`.
+- `modulos_progreso`: un registro por `(user_id, modulo_slug)` con JSONB `visited`, `quizzes`, `matrix`, `reflexiones`. JSONB a propósito — el set de checkpoints/chips es propio de cada módulo y no justifica una tabla por pregunta.
+
+API: `GET/PUT /api/v1/modulos/{slug}/progreso` (JWT). El HTML llama al BFF `/api/admin/proxy`. `completed_at` se sella la primera vez que el usuario visita el último paso.
+
 ### Auth y roles
 
 - Registro: email + password (hash argon2) → rol `viewer`.

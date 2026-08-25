@@ -44,6 +44,36 @@ Table users {
   Note: 'Coaches y super_admin. Registro crea viewer; super_admin asigna roles.'
 }
 
+Table modulos_aprendizaje {
+  slug varchar(64) [pk]
+  titulo varchar(255) [not null]
+  duracion_estimada varchar(64) [not null, default: '']
+  total_pasos integer [not null, default: 7]
+  created_at timestamptz [not null, default: `now()`]
+
+  Note: 'Catálogo de módulos asíncronos (seed: pedagogia-entornos-digitales). El contenido vive en el front; aquí solo metadatos.'
+}
+
+Table modulos_progreso {
+  id uuid [pk]
+  user_id uuid [not null, ref: > users.id]
+  modulo_slug varchar(64) [not null, ref: > modulos_aprendizaje.slug]
+  current_step integer [not null, default: 0]
+  // enteros de paneles visitados, p.ej. [0,1,2]
+  visited jsonb [not null, default: '[]']
+  // { "q1a": "b", ... } — valor seleccionado por checkpoint
+  quizzes jsonb [not null, default: '{}']
+  // { "chip-1": "good", ... } — cuadrante de la matriz frecuencia×complejidad
+  matrix jsonb [not null, default: '{}']
+  // { "senales-coach": "...", "resistencia": "..." }
+  reflexiones jsonb [not null, default: '{}']
+  completed_at timestamptz
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  Note: 'Un progreso por usuario y módulo. JSONB a propósito: el set de quizzes/chips es propio de cada HTML y no justifica tablas por pregunta.'
+}
+
 Table casos {
   id uuid [pk]
   codigo varchar(64) [unique]
@@ -98,4 +128,7 @@ indexes {
   (casos.owner_user_id)
   (casos.etapa_actual)
   (casos.estado)
+  (modulos_progreso.user_id)
+  (modulos_progreso.modulo_slug)
+  (modulos_progreso.user_id, modulos_progreso.modulo_slug) [unique]
 }

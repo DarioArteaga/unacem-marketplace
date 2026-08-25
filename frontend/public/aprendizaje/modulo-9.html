@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 9 · Pedagogía para Entornos Digitales — Programa SALTO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=Archivo:wght@300;400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+/* ---------- Nota de marca: en HTML se usan las tipografías sustitutas
+   Archivo Black (por Chaney) y Archivo (por Silka). Al publicar en un
+   entorno con licencias, reemplazar por las oficiales del brandbook. ---------- */
+:root{
+  --rojo:#FF0000; --rojo-hover:#D40000; --negro:#000000; --blanco:#FFFFFF;
+  --gris:#F4F4F4; --gris-medio:#9B9B9B; --borde:#D9D9D9;
+  --display:'Archivo Black',sans-serif;
+  --cuerpo:'Archivo',sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--cuerpo);
+  color:var(--negro);
+  background:var(--gris);
+  line-height:1.5;
+}
+h1,h2,h3{font-family:var(--display); text-transform:uppercase; line-height:1.08; margin:0 0 .5em 0;}
+.eyebrow{
+  color:var(--rojo); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  font-weight:700; margin-bottom:.6em; display:block;
+}
+p{margin:0 0 1em 0;}
+strong{font-weight:700;}
+a{color:var(--rojo);}
+
+/* ---------- Barra de identidad ---------- */
+.topbar{
+  background:var(--negro); border-bottom:4px solid var(--rojo);
+  color:var(--blanco); display:flex; align-items:center; justify-content:space-between;
+  padding:14px 24px; position:sticky; top:0; z-index:50; flex-wrap:wrap; gap:10px;
+}
+.topbar .brand{display:flex; align-items:center; gap:14px;}
+.topbar svg{height:26px; width:auto; fill:var(--blanco); display:block;}
+.topbar .meta{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--gris-medio);}
+.topbar .meta b{color:var(--blanco);}
+
+/* ---------- Barra de progreso ---------- */
+.progress-wrap{background:var(--negro); height:6px; width:100%;}
+.progress-bar{background:var(--rojo); height:100%; width:0%; transition:width .3s ease;}
+
+/* ---------- Layout ---------- */
+.app{display:flex; min-height:calc(100vh - 66px); max-width:1200px; margin:0 auto;}
+.sidebar{
+  width:270px; flex:0 0 270px; background:var(--blanco); border-right:1px solid var(--borde);
+  padding:20px 0;
+}
+.sidebar-title{
+  padding:0 20px 14px 20px; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--gris-medio); font-weight:700; border-bottom:1px solid var(--borde); margin-bottom:10px;
+}
+.nav-item{
+  display:flex; align-items:center; gap:12px; padding:12px 20px; cursor:pointer;
+  border-left:4px solid transparent; font-size:13.5px; color:var(--negro);
+}
+.nav-item:hover{background:var(--gris);}
+.nav-item.active{border-left:4px solid var(--rojo); background:var(--gris); font-weight:700;}
+.nav-item .dot{
+  width:22px; height:22px; border-radius:50%; border:2px solid var(--gris-medio);
+  display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;
+  color:var(--gris-medio); flex:0 0 22px;
+}
+.nav-item.active .dot{border-color:var(--rojo); color:var(--rojo);}
+.nav-item.done .dot{background:var(--negro); border-color:var(--negro); color:var(--blanco);}
+.nav-item.done .dot::after{content:'✓';}
+.nav-item.done .dot span{display:none;}
+
+.content{flex:1; padding:40px 48px; background:var(--blanco); min-width:0;}
+.panel{display:none;}
+.panel.active{display:block; animation:fade .25s ease;}
+@keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+.pill{
+  display:inline-block; border:1.5px solid var(--negro); padding:4px 12px; font-size:11px;
+  text-transform:uppercase; letter-spacing:.08em; font-weight:700; margin-bottom:16px;
+}
+
+/* ---------- Componentes de contenido ---------- */
+.callout{
+  background:var(--negro); color:var(--blanco); border-left:8px solid var(--rojo);
+  padding:18px 22px; margin:20px 0;
+}
+.callout strong{color:var(--blanco);}
+.callout.warn{background:var(--gris); color:var(--negro); border-left-color:var(--rojo);}
+.callout.warn strong{color:var(--negro);}
+
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:20px 0;}
+@media(max-width:820px){.grid-2{grid-template-columns:1fr;}}
+
+.card{border:1.5px solid var(--borde); padding:18px 20px;}
+.card h4{font-family:var(--cuerpo); font-weight:700; text-transform:uppercase; font-size:13px; letter-spacing:.06em; margin:0 0 10px 0;}
+.card.si{border-color:var(--negro);}
+.card.no{border-color:var(--gris-medio); background:var(--gris);}
+.card ul{margin:0; padding-left:18px;}
+.card li{margin-bottom:6px; font-size:14.5px;}
+
+table.brand-table{width:100%; border-collapse:collapse; margin:18px 0; font-size:14px;}
+table.brand-table th{
+  background:var(--negro); color:var(--blanco); text-align:left; padding:10px 14px;
+  text-transform:uppercase; font-size:11.5px; letter-spacing:.06em;
+}
+table.brand-table td{padding:12px 14px; border-bottom:1px solid var(--borde); vertical-align:top;}
+table.brand-table tr:nth-child(even) td{background:var(--gris);}
+
+.chip{
+  display:inline-block; border:1.5px solid var(--negro); padding:3px 10px; font-size:11px;
+  text-transform:uppercase; letter-spacing:.06em; margin:2px 4px 2px 0; font-weight:700;
+}
+.chip.rojo{border-color:var(--rojo); color:var(--rojo);}
+
+.matrix{
+  display:grid; grid-template-columns:auto 1fr 1fr; grid-template-rows:auto 1fr 1fr; gap:2px;
+  margin:24px 0; background:var(--borde); max-width:640px;
+}
+.matrix .cell{background:var(--blanco); padding:16px; min-height:110px; font-size:13px;}
+.matrix .axis-label{background:var(--negro); color:var(--blanco); display:flex; align-items:center; justify-content:center; font-size:11px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; text-align:center; padding:8px;}
+.matrix .corner{background:var(--gris);}
+.matrix .quad-title{font-weight:700; text-transform:uppercase; font-size:12px; margin-bottom:8px; display:block;}
+.matrix .quad-good{background:#FFF3F3;}
+.matrix .quad-good .quad-title{color:var(--rojo);}
+.matrix .drop-zone{min-height:110px; border:2px dashed var(--borde);}
+.matrix .drop-zone.dragover{border-color:var(--rojo); background:#FFF3F3;}
+.task-pool{display:flex; flex-wrap:wrap; gap:10px; margin:16px 0;}
+.task-chip{
+  border:1.5px solid var(--negro); padding:8px 14px; font-size:13px; cursor:grab; background:var(--blanco);
+  user-select:none;
+}
+.task-chip.placed{opacity:.35; cursor:default;}
+.drop-zone .task-chip{margin-top:8px; cursor:grab; opacity:1;}
+.matrix-feedback{font-size:13px; margin-top:6px; font-weight:700;}
+.matrix-feedback.ok{color:var(--rojo);}
+.matrix-feedback.bad{color:var(--gris-medio);}
+
+/* ---------- Quiz ---------- */
+.quiz{border:1.5px solid var(--negro); padding:22px 24px; margin:26px 0; background:var(--gris);}
+.quiz .eyebrow{margin-bottom:10px;}
+.quiz-question{font-weight:700; margin-bottom:14px; font-size:15px;}
+.quiz-options label{
+  display:block; padding:10px 14px; border:1.5px solid var(--borde); margin-bottom:8px;
+  background:var(--blanco); cursor:pointer; font-size:14px;
+}
+.quiz-options label:hover{border-color:var(--negro);}
+.quiz-options input{margin-right:10px;}
+.btn{
+  background:var(--blanco); border:2px solid var(--negro); color:var(--negro); padding:10px 22px;
+  font-family:var(--cuerpo); font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+  font-size:12.5px; cursor:pointer; transition:all .15s ease;
+}
+.btn:hover{background:var(--negro); color:var(--blanco);}
+.btn.primary{background:var(--negro); color:var(--blanco);}
+.btn.primary:hover{background:var(--rojo); border-color:var(--rojo);}
+.btn:disabled{opacity:.4; cursor:not-allowed;}
+.quiz-feedback{margin-top:14px; padding:12px 14px; font-size:13.5px; display:none; border-left:6px solid var(--rojo);}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:#FFF3F3;}
+.quiz-feedback.incorrect{background:var(--blanco); border-left-color:var(--gris-medio);}
+
+.reflect{border:1.5px dashed var(--gris-medio); padding:18px 20px; margin:22px 0; background:var(--blanco);}
+.reflect textarea{
+  width:100%; min-height:80px; border:1.5px solid var(--borde); padding:10px; font-family:var(--cuerpo);
+  font-size:14px; resize:vertical;
+}
+
+.nav-buttons{display:flex; justify-content:space-between; margin-top:36px; padding-top:20px; border-top:1px solid var(--borde);}
+
+.checklist-final{list-style:none; padding:0; margin:20px 0;}
+.checklist-final li{padding:10px 0 10px 34px; position:relative; border-bottom:1px solid var(--borde); font-size:14.5px;}
+.checklist-final li::before{
+  content:'✓'; position:absolute; left:0; top:8px; width:22px; height:22px; border-radius:50%;
+  background:var(--rojo); color:var(--blanco); font-size:12px; font-weight:700; display:flex;
+  align-items:center; justify-content:center;
+}
+
+.complete-box{text-align:center; padding:40px 20px; background:var(--negro); color:var(--blanco); margin-top:30px;}
+.complete-box h3{color:var(--blanco);}
+.complete-box p{color:var(--gris-medio);}
+
+.mobile-nav-toggle{display:none;}
+
+/* ---------- Modo edición ----------
+   Nota de seguridad: el contenteditable se aplica ELEMENTO POR ELEMENTO
+   (no en todo .content de una sola vez). Así, si alguien selecciona todo
+   (Ctrl/Cmd+A) dentro de un párrafo, solo se selecciona ese párrafo y no
+   la sección completa. */
+body.edit-mode .content{outline:2px dashed var(--rojo); outline-offset:10px;}
+[contenteditable="true"]{outline:1px dashed transparent;}
+[contenteditable="true"]:hover{outline:1px dashed rgba(255,0,0,.6); cursor:text; background:#FFF9F9;}
+[contenteditable="true"]:focus{outline:2px solid var(--rojo); background:#FFF3F3;}
+.edit-fab{
+  position:fixed; bottom:20px; right:20px; z-index:201;
+  background:var(--negro); color:var(--blanco); border:2px solid var(--negro);
+  padding:12px 18px; font-family:var(--cuerpo); font-weight:700; text-transform:uppercase;
+  letter-spacing:.06em; font-size:12px; cursor:pointer;
+}
+.edit-fab:hover{background:var(--rojo); border-color:var(--rojo);}
+.edit-fab.on{background:var(--rojo); border-color:var(--rojo);}
+.edit-toolbar{
+  display:none; position:fixed; bottom:70px; right:20px; z-index:200;
+  background:var(--blanco); border:2px solid var(--negro); padding:14px; gap:10px;
+  flex-direction:column; max-width:260px;
+}
+.edit-toolbar.show{display:flex;}
+.edit-toolbar .row{display:flex; gap:8px;}
+.edit-toolbar p{font-size:11.5px; color:var(--gris-medio); margin:0;}
+.edit-toolbar .btn{flex:1; font-size:11px; padding:9px 10px;}
+.edit-toolbar .btn.on{background:var(--rojo); border-color:var(--rojo); color:var(--blanco);}
+
+@media(max-width:900px){
+  .app{flex-direction:column;}
+  .sidebar{width:100%; flex:none; border-right:none; border-bottom:1px solid var(--borde); padding:10px 0;}
+  .content{padding:28px 20px;}
+}
+footer{text-align:center; padding:20px; font-size:11px; color:var(--gris-medio); letter-spacing:.04em;}
+</style>
+</head>
+<body class="">
+
+<div class="topbar">
+  <div class="brand">
+    <svg viewBox="193 230 292 93" role="img" aria-label="Grupo UNACEM"><path d="M 233.95 319.37 C 212.75 319.37 196.14 303.18 196.14 280.21 L 196.14 248.93 L 231.43 232.71 L 231.43 280.21 C 231.43 284.27 233.32 284.27 233.95 284.27 C 234.57 284.27 236.46 284.27 236.46 280.21 L 236.46 232.71 L 251.59 239.66 L 251.59 280.21 C 251.59 291.37 243.85 299.31 233.95 299.31 C 224.05 299.31 216.30 291.37 216.30 280.21 L 216.30 256.23 L 211.27 258.55 L 211.27 280.21 C 211.27 294.41 221.14 304.33 233.95 304.33 C 246.75 304.33 256.63 294.41 256.63 280.21 L 256.63 241.98 L 271.75 248.93 L 271.75 280.21 C 271.75 303.18 255.15 319.37 233.95 319.37 M 201.18 252.14 L 201.18 280.21 C 201.18 289.93 204.29 297.18 210.37 303.88 C 216.50 310.64 224.88 314.36 233.95 314.36 C 243.02 314.36 251.39 310.64 257.53 303.88 C 263.61 297.18 266.71 289.93 266.71 280.21 L 266.71 252.14 L 261.67 249.82 L 261.67 280.21 C 261.67 288.27 258.49 294.96 253.57 300.51 C 248.51 306.20 241.54 309.34 233.95 309.34 C 226.35 309.34 219.39 306.20 214.33 300.51 C 209.40 294.96 206.23 288.27 206.23 280.21 L 206.23 255.34 L 221.35 248.39 L 221.35 280.21 C 221.35 288.65 226.67 294.30 233.95 294.30 C 241.23 294.30 246.55 288.65 246.55 280.21 L 246.55 242.87 L 241.51 240.55 L 241.51 280.21 C 241.51 285.72 238.39 289.28 233.95 289.28 C 229.51 289.28 226.39 285.72 226.39 280.21 L 226.39 240.55 Z M 201.18 252.14 "></path><path d="M 312.69 308.18 L 313.18 308.18 C 321.25 308.18 325.69 303.94 325.69 296.25 L 325.69 282.46 L 318.43 282.46 L 318.43 295.50 C 318.43 299.06 316.42 301.11 313.18 301.11 L 312.69 301.11 C 309.45 301.11 307.44 299.06 307.44 295.50 L 307.44 282.46 L 300.18 282.46 L 300.18 296.25 C 300.18 303.94 304.62 308.18 312.69 308.18 "></path><path d="M 357.57 307.73 L 357.57 282.46 L 350.30 282.46 L 350.30 296.67 L 339.52 282.46 L 332.05 282.46 L 332.05 307.73 L 339.31 307.73 L 339.31 293.16 L 350.10 307.73 Z M 357.57 307.73 "></path><path d="M 381.32 303.59 L 382.41 307.73 L 389.88 307.73 L 383.17 282.46 L 368.82 282.46 L 362.11 307.73 L 369.58 307.73 L 370.67 303.59 Z M 374.51 288.82 L 377.48 288.82 L 379.64 297.15 L 372.34 297.15 Z M 374.51 288.82 "></path><path d="M 412.73 292.85 L 420.50 292.85 C 419.51 286.25 414.14 282.01 406.70 282.01 L 406.58 282.01 C 398.36 282.01 392.61 287.39 392.61 295.09 C 392.61 302.80 398.36 308.18 406.58 308.18 L 406.70 308.18 C 414.14 308.18 419.51 303.94 420.50 297.34 L 412.73 297.34 C 411.80 299.80 409.46 301.37 406.70 301.37 L 406.58 301.37 C 402.80 301.37 400.17 298.79 400.17 295.09 C 400.17 291.40 402.80 288.82 406.58 288.82 L 406.70 288.82 C 409.45 288.82 411.79 290.39 412.73 292.85 "></path><path d="M 446.48 288.71 L 446.48 282.46 L 425.95 282.46 L 425.95 307.73 L 446.48 307.73 L 446.48 301.48 L 433.21 301.48 L 433.21 297.92 L 443.93 297.92 L 443.93 292.27 L 433.21 292.27 L 433.21 288.71 Z M 446.48 288.71 "></path><path d="M 481.43 307.73 L 481.43 282.46 L 474.00 282.46 L 467.13 291.73 L 460.27 282.46 L 452.84 282.46 L 452.84 307.73 L 460.10 307.73 L 460.10 293.80 L 465.58 300.61 L 468.69 300.61 L 474.16 293.80 L 474.16 307.73 Z M 481.43 307.73 "></path><path d="M 452.84 262.00 C 452.84 269.85 447.02 275.10 438.88 275.10 L 438.77 275.10 C 430.81 275.10 424.81 269.85 424.81 262.00 C 424.81 254.19 430.63 248.91 438.77 248.91 L 438.88 248.91 C 447.02 248.91 452.84 254.19 452.84 262.00 M 445.28 262.00 C 445.28 258.38 442.68 255.76 438.89 255.76 L 438.77 255.76 C 434.97 255.76 432.37 258.38 432.37 262.00 C 432.37 265.66 434.97 268.25 438.77 268.25 L 438.89 268.25 C 442.68 268.25 445.28 265.66 445.28 262.00 "></path><path d="M 376.04 275.09 L 376.52 275.09 C 384.59 275.09 389.04 270.85 389.04 263.16 L 389.04 249.36 L 381.77 249.36 L 381.77 262.41 C 381.77 265.97 379.77 268.01 376.52 268.01 L 376.04 268.01 C 372.79 268.01 370.78 265.97 370.78 262.41 L 370.78 249.36 L 363.52 249.36 L 363.52 263.16 C 363.52 270.85 367.96 275.09 376.04 275.09 "></path><path d="M 352.58 266.77 C 355.46 265.07 357.16 262.16 357.16 258.86 C 357.16 253.61 352.88 249.34 346.37 249.34 L 332.52 249.34 L 332.52 274.62 L 339.78 274.62 L 339.78 268.37 L 345.42 268.37 L 349.55 274.62 L 357.77 274.62 Z M 346.75 262.11 L 339.78 262.11 L 339.78 255.60 L 346.75 255.60 C 348.47 255.60 349.90 257.04 349.90 258.86 C 349.90 260.67 348.47 262.11 346.75 262.11 "></path><path d="M 409.24 249.34 L 395.39 249.34 L 395.39 274.62 L 402.66 274.62 L 402.66 268.37 L 409.24 268.37 C 415.75 268.37 420.04 264.11 420.04 258.86 C 420.04 253.61 415.75 249.34 409.24 249.34 M 409.62 262.11 L 402.66 262.11 L 402.66 255.60 L 409.62 255.60 C 411.35 255.60 412.78 257.04 412.78 258.85 C 412.78 260.67 411.35 262.11 409.62 262.11 "></path><path d="M 326.87 260.48 L 312.87 260.48 L 312.87 266.13 L 317.96 266.13 C 316.83 267.45 315.09 268.25 312.99 268.25 L 312.88 268.25 C 309.07 268.25 306.48 265.66 306.48 262.00 C 306.48 258.38 309.07 255.76 312.88 255.76 L 312.99 255.76 C 315.33 255.76 317.21 256.75 318.32 258.36 L 326.48 258.36 C 324.95 252.60 319.79 248.91 312.99 248.91 L 312.88 248.91 C 304.73 248.91 298.92 254.19 298.92 262.00 C 298.92 269.85 304.92 275.10 312.88 275.10 L 312.99 275.10 C 321.13 275.10 326.95 269.85 326.95 262.00 C 326.95 261.48 326.92 260.98 326.87 260.48 "></path></svg>
+    <span style="font-size:12px; letter-spacing:.1em; text-transform:uppercase; border-left:1px solid #444; padding-left:14px;">Programa SALTO · Ruta del Champion</span>
+  </div>
+  <div class="meta">
+    <a href="/admin" style="color:#fff; text-decoration:none; margin-right:12px;">← Admin</a>
+    Módulo 9 · <b>Pedagogía para Entornos Digitales</b> · Asíncrono · ~1h45–2h15
+    · <span id="saveStatus">Sin guardar aún</span>
+  </div>
+</div>
+<div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+<div class="app">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-title">Contenido del módulo</div>
+    <div class="nav-item active" data-step="0"><span class="dot"><span>0</span></span> Bienvenida</div>
+    <div class="nav-item" data-step="1"><span class="dot"><span>1</span></span> De usuario a coach</div>
+    <div class="nav-item" data-step="2"><span class="dot"><span>2</span></span> El marco de la conversación</div>
+    <div class="nav-item" data-step="3"><span class="dot"><span>3</span></span> Qué tarea atacar primero</div>
+    <div class="nav-item" data-step="4"><span class="dot"><span>4</span></span> Copilot vs. Claude Teams</div>
+    <div class="nav-item" data-step="5"><span class="dot"><span>5</span></span> Resistencia y escalada</div>
+    <div class="nav-item" data-step="6"><span class="dot"><span>6</span></span> Cierre y siguientes pasos</div>
+  </nav>
+
+  <main class="content">
+
+    <!-- PANEL 0 — BIENVENIDA -->
+    <section class="panel active" data-panel="0">
+      <span class="eyebrow" contenteditable="false">Escalamiento · Habilitación de Coaches</span>
+      <h1 contenteditable="false">Pedagogía para entornos digitales</h1>
+      <p style="font-size:16px;" contenteditable="false">Llegaste hasta acá porque ya construiste tu propio caso de uso con IA y te graduaste como Champion. Ahora empieza tu segunda ruta: la de ayudar a que <strong>otros</strong> construyan el suyo. Este módulo asíncrono te da las bases antes de tus dos sesiones en vivo — el Módulo 10 (tópicos intermedios) y el Módulo 11 (rol-play de coaching).</p>
+
+      <div class="callout" contenteditable="false">
+        <strong>Cómo usar este material:</strong> los cinco bloques de contenido (1 a 5) están diseñados para tomarte unos 20 minutos cada uno — en total, calcula entre 1h45 y 2h15. No hace falta completarlo de una sola sentada: puedes dividirlo en 2 o 3 sesiones cortas usando el menú de la izquierda como guía. Tu progreso (sección actual, quizzes, matriz y reflexiones) se guarda en tu cuenta al avanzar. Cada bloque tiene varias actividades cortas — complétalas, porque de ahí sale la práctica que harás en vivo en M11.
+      </div>
+
+      <h3 style="font-size:16px; margin-top:30px;" contenteditable="false">Lo que vas a poder hacer al terminar</h3>
+      <ul class="checklist-final" style="margin-top:10px;">
+        <li contenteditable="false">Distinguir qué cambia entre <em>usar</em> IA y <em>acompañar</em> a alguien más a usarla.</li>
+        <li contenteditable="false">Aplicar un marco simple de conversación para tus sesiones de coaching.</li>
+        <li contenteditable="false">Usar un instrumento para decidir con qué tarea repetitiva empezar con tu coachee.</li>
+        <li contenteditable="false">Saber cuándo recomendar Copilot o Claude Teams, y qué información es segura compartir en cada una.</li>
+        <li contenteditable="false">Reconocer cuándo escalar a un experto y cómo manejar la resistencia de un coachee.</li>
+      </ul>
+
+      <div class="nav-buttons">
+        <span></span>
+        <button class="btn primary" onclick="goTo(1)">Comenzar →</button>
+      </div>
+    </section>
+
+    <!-- PANEL 1 — ROL DEL COACH -->
+    <section class="panel" data-panel="1">
+      <span class="eyebrow" contenteditable="false">Bloque 1 · ~20 min</span>
+      <h1 contenteditable="false">De usuario a coach</h1>
+      <p contenteditable="false">En Graduación tu trabajo fue construir <strong>tu</strong> caso de uso. En Escalamiento tu trabajo es distinto: que tu coachee construya <strong>el suyo</strong>. Parece un matiz, pero es el cambio de rol más importante de todo el programa — y el que más champions pasan por alto, porque nadie avisa que ser bueno usando IA y ser bueno enseñando a usarla son dos habilidades distintas.</p>
+      <p contenteditable="false">Un coach que resuelve el problema en lugar de su coachee produce dependencia, no autonomía. Y la dependencia no escala: tú solo puedes atender a un puñado de personas a la vez, mientras que un coachee autónomo puede después convertirse en referente de su propio equipo.</p>
+
+      <h3 contenteditable="false">La trampa del experto</h3>
+      <p contenteditable="false">Hay una trampa bien documentada en la formación de adultos: entre más bueno eres haciendo algo, más difícil te resulta explicar cómo lo hiciste, porque para ti ya es automático. Un cirujano excelente no necesariamente es un buen profesor de cirugía; requiere un set de habilidades distinto — paciencia con el ritmo ajeno, capacidad de hacer visible lo que para él es invisible, y sobre todo, resistir el impulso de "mejor lo hago yo, así avanzamos". Tú, como champion recién graduado, estás en el mismo punto: acabas de volverte bueno usando IA, y ahora toca aprender el oficio distinto de acompañar a alguien más a serlo.</p>
+
+      <h3 contenteditable="false">Cuatro razones por las que este cambio se te va a olvidar en la práctica</h3>
+      <div class="card no" style="margin:16px 0;">
+        <ul>
+          <li contenteditable="false"><strong>La urgencia del otro es contagiosa.</strong> Tu coachee tiene una fecha límite y tú tienes la respuesta en la cabeza — resistir la tentación de solo dársela requiere disciplina activa, no pasa solo.</li>
+          <li contenteditable="false"><strong>Hacer preguntas se siente "menos útil" que dar respuestas.</strong> Sobre todo al inicio, quedarte solo preguntando puede sentirse como que no estás aportando, aunque sea exactamente lo contrario.</li>
+          <li contenteditable="false"><strong>Medimos éxito por output, no por autonomía transferida.</strong> Si tu coachee sale con un prompt que funciona pero no entiende por qué funciona, la sesión falló aunque el entregable esté bien.</li>
+          <li contenteditable="false"><strong>Nadie te dio tiempo protegido para esto.</strong> Si tu jefe no sabe que ahora tienes horas de coaching en tu semana, vas a terminar improvisando sesiones de 5 minutos entre juntas — y en 5 minutos, es más rápido resolver que enseñar.</li>
+        </ul>
+      </div>
+
+      <div class="callout" contenteditable="false">
+        <strong>Caso del programa — Fernanda y Julio:</strong> Fernanda, de logística, automatizó su reporte de inventario en Graduación usando Copilot. En Escalamiento le asignaron como coachee a Julio, de Compras, que quería hacer algo parecido con sus órdenes de compra. En su primera sesión, Fernanda —sin darse cuenta— terminó compartiendo pantalla y escribiendo ella misma el prompt mientras Julio observaba. Salieron con un prompt que funcionaba. Una semana después, Julio no podía adaptarlo a un caso ligeramente distinto, porque nunca entendió la lógica detrás — solo vio el resultado.
+      </div>
+      <p contenteditable="false">Vamos a usar a Fernanda y Julio como hilo conductor en los siguientes bloques, para que veas cómo se aplica cada herramienta a un caso concreto y no solo en abstracto.</p>
+
+      <div class="quiz" data-quiz="q1a">
+        <span class="eyebrow" contenteditable="false">Checkpoint 1 de 3</span>
+        <div class="quiz-question" contenteditable="false">¿Qué fue exactamente lo que salió mal en la sesión de Fernanda y Julio?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q1a" value="a"> El prompt que armaron no funcionó.</label>
+          <label contenteditable="false"><input type="radio" name="q1a" value="b"> Julio salió con un resultado que funcionaba, pero sin el criterio para adaptarlo él mismo después.</label>
+          <label contenteditable="false"><input type="radio" name="q1a" value="c"> Fernanda tardó demasiado tiempo en la sesión.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q1a','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q1a"></div>
+      </div>
+
+      <h3 contenteditable="false">Sí es tu rol / No es tu rol</h3>
+      <div class="grid-2">
+        <div class="card si">
+          <h4>Sí es tu rol</h4>
+          <ul>
+            <li contenteditable="false">Guiar con preguntas para que el coachee encuentre su propio caso de uso.</li>
+            <li contenteditable="false">Compartir ejemplos y criterio de calidad de lo que ya aprendiste.</li>
+            <li contenteditable="false">Conectar a tu coachee con el Círculo de Inteligencia Artificial.</li>
+            <li contenteditable="false">Escalar a un Experto cuando el tema se sale de tu dominio.</li>
+            <li contenteditable="false">Dejar que el coachee escriba y pruebe el prompt, aunque sea más lento que hacerlo tú.</li>
+          </ul>
+        </div>
+        <div class="card no">
+          <h4>No es tu rol</h4>
+          <ul>
+            <li contenteditable="false">Ser soporte técnico permanente y a toda hora.</li>
+            <li contenteditable="false">Resolver la tarea del coachee en su lugar.</li>
+            <li contenteditable="false">Reemplazar la capacitación formal de Sensibilización / Habilitación.</li>
+            <li contenteditable="false">Tener todas las respuestas técnicas — para eso existen los Expertos.</li>
+            <li contenteditable="false">Terminar la sesión con un entregable que solo tú entiendes cómo se hizo.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 contenteditable="false">Los tres momentos de una sesión de coaching</h3>
+      <p contenteditable="false">Toda sesión, sin importar cuánto dure, tiene tres momentos con un propósito distinto. Confundirlos es otra forma común de deslizarse de coach a "el que resuelve":</p>
+      <table class="brand-table">
+        <tbody><tr><th contenteditable="false">Momento</th><th contenteditable="false">Qué haces</th><th contenteditable="false">Qué evitas</th></tr>
+        <tr><td contenteditable="false"><strong>Apertura</strong></td><td contenteditable="false">Entender qué trae el coachee y qué espera lograr hoy.</td><td contenteditable="false">Empezar a proponer soluciones antes de escuchar el problema completo.</td></tr>
+        <tr><td contenteditable="false"><strong>Desarrollo</strong></td><td contenteditable="false">Guiar con preguntas mientras el coachee construye, prueba y ajusta.</td><td contenteditable="false">Tomar el teclado o compartir tu pantalla para "ir más rápido".</td></tr>
+        <tr><td contenteditable="false"><strong>Cierre</strong></td><td contenteditable="false">Confirmar el siguiente paso concreto y qué va a intentar solo antes de la próxima sesión.</td><td contenteditable="false">Terminar sin que quede claro qué hace el coachee por su cuenta.</td></tr>
+      </tbody></table>
+
+      <div class="quiz" data-quiz="q1b">
+        <span class="eyebrow" contenteditable="false">Checkpoint 2 de 3</span>
+        <div class="quiz-question" contenteditable="false">Estás en el momento de "Desarrollo" con un coachee y notas que llevas 3 minutos escribiendo tú el prompt mientras él observa. ¿Qué deberías hacer?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q1b" value="a"> Terminar de escribirlo, ya que estás a la mitad — sería un desperdicio parar ahora.</label>
+          <label contenteditable="false"><input type="radio" name="q1b" value="b"> Pasarle el teclado y seguir guiando con preguntas desde ahí.</label>
+          <label contenteditable="false"><input type="radio" name="q1b" value="c"> Explicarle después, por escrito, todo lo que hiciste.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q1b','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q1b"></div>
+      </div>
+
+      <div class="callout warn" contenteditable="false">
+        <strong>Por qué importa:</strong> completar Escalamiento con este rol claro es lo que te lleva a la Certificación Coach UNACEM al final de la ruta.
+      </div>
+
+      <h3 contenteditable="false">Señales de que saliste del rol de coach</h3>
+      <ul class="checklist-final">
+        <li contenteditable="false">Terminaste tú el prompt, el documento o la fórmula, no tu coachee.</li>
+        <li contenteditable="false">Hablaste más tú que tu coachee durante la sesión.</li>
+        <li contenteditable="false">Tu coachee no podría explicarle a alguien más lo que acaban de hacer.</li>
+        <li contenteditable="false">Saliste de la sesión sintiendo que "resolviste un problema" en vez de "ayudaste a alguien a resolverlo".</li>
+      </ul>
+
+      <div class="reflect">
+        <span class="eyebrow" contenteditable="false">Autoevaluación (se guarda en tu cuenta)</span>
+        <p style="margin-bottom:8px;" contenteditable="false">Piensa en la última vez que ayudaste a un compañero con algo técnico, así fuera antes del programa. ¿En cuál de las cuatro señales de arriba caíste, si en alguna?</p>
+        <textarea data-reflect="senales-coach" placeholder="Escribe aquí tu respuesta..."></textarea>
+      </div>
+
+      <div class="quiz" data-quiz="q1c">
+        <span class="eyebrow" contenteditable="false">Checkpoint 3 de 3</span>
+        <div class="quiz-question" contenteditable="false">¿Cuál de estas es la mejor definición de "éxito" en una sesión de coaching?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q1c" value="a"> El coachee sale con un caso de uso funcionando, sin importar quién lo construyó.</label>
+          <label contenteditable="false"><input type="radio" name="q1c" value="b"> El coachee sale entendiendo por qué funciona lo que construyó, y puede intentar el siguiente paso solo.</label>
+          <label contenteditable="false"><input type="radio" name="q1c" value="c"> La sesión duró menos de 30 minutos.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q1c','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q1c"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn" onclick="goTo(0)">← Atrás</button>
+        <button class="btn primary" onclick="goTo(2)">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- PANEL 2 — MARCO DE CONVERSACIÓN -->
+    <section class="panel" data-panel="2">
+      <span class="eyebrow" contenteditable="false">Bloque 2 · ~20 min</span>
+      <h1 contenteditable="false">El marco de la conversación</h1>
+      <p contenteditable="false">Cuando te sientas con un coachee, no improvises la conversación — usa una estructura simple de cuatro pasos. Se conoce como M-R-O-C (versión en español del marco de coaching más usado a nivel global, GROW: Goal-Reality-Options-Will). Retomemos a Fernanda: en su segunda sesión con Julio, decidió seguir el marco en vez de compartir pantalla desde el inicio. Así se vio:</p>
+
+      <table class="brand-table">
+        <tbody><tr><th contenteditable="false">Paso</th><th contenteditable="false">Pregunta que guía</th><th contenteditable="false">Lo que pasó con Fernanda y Julio</th></tr>
+        <tr><td contenteditable="false"><strong>Meta</strong></td><td contenteditable="false">¿Qué quieres lograr?</td><td contenteditable="false">Julio: "Quiero dejar de armar la orden de compra copiando datos a mano."</td></tr>
+        <tr><td contenteditable="false"><strong>Realidad</strong></td><td contenteditable="false">¿Dónde estás hoy?</td><td contenteditable="false">Julio: "Hoy copio datos de 3 correos distintos y me toma 40 minutos por orden."</td></tr>
+        <tr><td contenteditable="false"><strong>Opciones</strong></td><td contenteditable="false">¿Qué caminos existen?</td><td contenteditable="false">Fernanda no propuso la solución — preguntó: "¿Dónde viven esos 3 correos? ¿Ya probaste pedirle a Copilot que los resuma?" Julio propuso probarlo él mismo.</td></tr>
+        <tr><td contenteditable="false"><strong>Compromiso</strong></td><td contenteditable="false">¿Cuál es tu siguiente paso?</td><td contenteditable="false">Julio: "Voy a probarlo con la próxima orden que me llegue y te cuento el jueves qué tal salió."</td></tr>
+      </tbody></table>
+
+      <p contenteditable="false">Nota algo importante: en el paso de Opciones, Fernanda no dijo "usa Copilot para esto" — hizo una pregunta que llevó a Julio a probarlo él mismo. Esa diferencia, mínima en apariencia, es la que separa a un coach de alguien que solo da instrucciones.</p>
+
+      <div class="quiz" data-quiz="q2a">
+        <span class="eyebrow" contenteditable="false">Checkpoint 1 de 3</span>
+        <div class="quiz-question" contenteditable="false">En el ejemplo de Fernanda y Julio, ¿en qué paso del marco M-R-O-C se identificó que el problema real eran los 3 correos distintos?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q2a" value="a"> Meta</label>
+          <label contenteditable="false"><input type="radio" name="q2a" value="b"> Realidad</label>
+          <label contenteditable="false"><input type="radio" name="q2a" value="c"> Compromiso</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q2a','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q2a"></div>
+      </div>
+
+      <h3 contenteditable="false">Escucha activa: tres técnicas concretas</h3>
+      <p contenteditable="false">El marco M-R-O-C solo funciona si de verdad escuchas antes de preguntar lo siguiente. Tres técnicas simples marcan la diferencia:</p>
+      <div class="card si" style="margin:16px 0;">
+        <ul>
+          <li contenteditable="false"><strong>Parafrasear.</strong> Repite con tus palabras lo que entendiste antes de avanzar: "o sea que el cuello de botella es juntar los datos, no escribir el correo, ¿verdad?"</li>
+          <li contenteditable="false"><strong>Resumir en voz alta al cerrar cada paso.</strong> Antes de pasar de Realidad a Opciones, di en una frase dónde están parados — ayuda al coachee a organizar su propio pensamiento.</li>
+          <li contenteditable="false"><strong>Tolerar el silencio incómodo.</strong> Después de una pregunta abierta, cuenta 3 segundos en tu cabeza antes de decir algo más. La mayoría de los coaches nuevos llenan ese silencio con una pista, y le quitan al coachee la oportunidad de pensar.</li>
+        </ul>
+      </div>
+      <p contenteditable="false">Si te descubres dando la respuesta a la mitad de la explicación, es señal de que saliste del rol de coach — vuelve al Bloque 1 si necesitas repasar esas señales.</p>
+
+      <h3 contenteditable="false">Preguntas que abren vs. preguntas que cierran</h3>
+      <p contenteditable="false">Una pregunta cerrada casi siempre se puede contestar con "sí", "no" o un dato puntual, y termina la conversación en vez de abrirla. Compara estos pares:</p>
+      <div class="grid-2">
+        <div class="card no">
+          <h4>Cierran (evítalas)</h4>
+          <ul>
+            <li contenteditable="false">"¿Ya probaste con un prompt más específico?"</li>
+            <li contenteditable="false">"¿Eso no lo puedes hacer con una fórmula de Excel?"</li>
+            <li contenteditable="false">"¿Entendiste?"</li>
+            <li contenteditable="false">"¿Quieres que te lo muestre yo?"</li>
+          </ul>
+        </div>
+        <div class="card si">
+          <h4>Abren (búscalas)</h4>
+          <ul>
+            <li contenteditable="false">"¿Qué resultado esperabas y en qué se diferencia de lo que obtuviste?"</li>
+            <li contenteditable="false">"¿Qué parte de esta tarea te quita más tiempo hoy?"</li>
+            <li contenteditable="false">"¿Cómo le explicarías a alguien más lo que acabamos de hacer?"</li>
+            <li contenteditable="false">"¿Qué crees que pasaría si lo intentas de esta otra forma?"</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz" data-quiz="q2b">
+        <span class="eyebrow" contenteditable="false">Checkpoint 2 de 3</span>
+        <div class="quiz-question" contenteditable="false">¿Cuál de estas es una pregunta que abre la conversación en vez de cerrarla?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q2b" value="a"> "¿Ya leíste la guía de prompts que te mandé?"</label>
+          <label contenteditable="false"><input type="radio" name="q2b" value="b"> "¿Qué intentaste hasta ahora y qué pasó cuando lo probaste?"</label>
+          <label contenteditable="false"><input type="radio" name="q2b" value="c"> "¿No sería más fácil pedírselo directo a Copilot?"</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q2b','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q2b"></div>
+      </div>
+
+      <h3 contenteditable="false">Ejercicio: identifica el paso de M-R-O-C</h3>
+      <p contenteditable="false">Lee cada frase de un coachee y ubica a qué paso del marco pertenece:</p>
+      <div class="card" style="margin:16px 0;">
+        <ul>
+          <li contenteditable="false">"La verdad no sé por dónde empezar, solo sé que quiero dejar de hacer esto a mano." → <em>Meta</em></li>
+          <li contenteditable="false">"Hoy reviso 15 facturas a la semana, una por una, comparando contra el sistema." → <em>Realidad</em></li>
+          <li contenteditable="false">"Podría pedirle a la IA que compare los dos archivos y me marque las diferencias." → <em>Opciones</em></li>
+          <li contenteditable="false">"Voy a intentarlo con las facturas de esta semana y te aviso el viernes." → <em>Compromiso</em></li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-quiz="q2c">
+        <span class="eyebrow" contenteditable="false">Checkpoint 3 de 3</span>
+        <div class="quiz-question" contenteditable="false">Tu coachee dice: "No tengo idea de qué se puede hacer aquí, solo sé que odio este proceso." ¿Qué pregunta usarías para avanzar?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q2c" value="a"> "¿Qué te gustaría que fuera distinto de este proceso si pudieras cambiar una sola cosa?"</label>
+          <label contenteditable="false"><input type="radio" name="q2c" value="b"> "¿Ya probaste pedirle ayuda a Copilot?"</label>
+          <label contenteditable="false"><input type="radio" name="q2c" value="c"> "¿Cuánto tiempo llevas haciendo esto así?"</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q2c','a')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q2c"></div>
+      </div>
+
+      <div class="callout warn" contenteditable="false">
+        <strong>Nota:</strong> la opción "c" no está mal como pregunta de Realidad, pero no es la mejor primera pregunta cuando el coachee todavía no tiene clara su Meta — por eso "a" es la más útil en este punto de la conversación.
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn" onclick="goTo(1)">← Atrás</button>
+        <button class="btn primary" onclick="goTo(3)">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- PANEL 3 — PRIORIZACIÓN -->
+    <section class="panel" data-panel="3">
+      <span class="eyebrow" contenteditable="false">Bloque 3 · ~20 min</span>
+      <h1 contenteditable="false">Qué tarea atacar primero</h1>
+      <p contenteditable="false">Casi todo coachee llega con más de una idea. No todas valen lo mismo como <em>primer</em> caso de uso: elegir bien la primera victoria es lo que construye confianza para seguir — y elegir mal puede hacer que un coachee se frustre y no le dé una segunda oportunidad a la IA.</p>
+
+      <h3 contenteditable="false">Por qué no basta con "lo que más le urge"</h3>
+      <p contenteditable="false">Un error común de coach nuevo es dejar que el coachee elija su primer caso de uso solo por urgencia ("esto es lo que más me quita tiempo esta semana"), sin revisar qué tan complejo es resolverlo. Una tarea urgente pero compleja puede tomar varias sesiones sin mostrar resultado, y eso desgasta la motivación inicial más rápido que casi cualquier otra cosa. Por eso usamos dos variables, no una: <strong>frecuencia</strong> (qué tan seguido se repite la tarea) y <strong>complejidad</strong> (cuántos pasos, fuentes de información o criterio humano requiere).</p>
+
+      <div class="callout" contenteditable="false">
+        <strong>Con Fernanda y Julio:</strong> Julio también mencionó que le gustaría automatizar la conciliación anual de proveedores, una tarea que hace una sola vez al año pero que le toma dos semanas completas. Fernanda tuvo que resistir la tentación de empezar por ahí solo porque "sonaba más impresionante", y en cambio lo llevó a elegir la orden de compra semanal como primer caso de uso.
+      </div>
+
+      <p contenteditable="false"><strong>Ejercicio:</strong> arrastra cada tarea al cuadrante donde crees que va, según qué tan frecuente y qué tan compleja es.</p>
+
+      <div class="task-pool" id="taskPool" ondrop="dropToPool(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+        <div class="task-chip" draggable="true" contenteditable="false" data-id="chip-1" data-answer="good">Armar el reporte semanal de ventas</div>
+        <div class="task-chip" draggable="true" contenteditable="false" data-id="chip-2" data-answer="good">Copiar datos de 3 correos a la orden de compra diaria</div>
+        <div class="task-chip" draggable="true" contenteditable="false" data-id="chip-3" data-answer="ok">Responder correos frecuentes de proveedores</div>
+        <div class="task-chip" draggable="true" contenteditable="false" data-id="chip-4" data-answer="bad">Redactar la política anual de compras</div>
+        <div class="task-chip" draggable="true" contenteditable="false" data-id="chip-5" data-answer="bad">Auditar un contrato legal complejo</div>
+        <div class="task-chip" draggable="true" contenteditable="false" data-id="chip-6" data-answer="skip">Actualizar el directorio interno de contactos</div>
+      </div>
+
+      <div class="matrix">
+        <div class="corner"></div>
+        <div class="axis-label">Baja complejidad</div>
+        <div class="axis-label">Alta complejidad</div>
+        <div class="axis-label">Alta frecuencia</div>
+        <div class="cell quad-good drop-zone" data-zone="good" ondrop="dropTask(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" contenteditable="false">
+          <span class="quad-title">Empieza aquí</span>
+          Gana rápido, aprende rápido: mejor primer caso de uso.
+        </div>
+        <div class="cell drop-zone" data-zone="ok" ondrop="dropTask(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" contenteditable="false">
+          <span class="quad-title">Vale la pena, con apoyo</span>
+          Buen segundo caso de uso, ya con más confianza.
+        </div>
+        <div class="axis-label">Baja frecuencia</div>
+        <div class="cell drop-zone" data-zone="skip" ondrop="dropTask(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" contenteditable="false">
+          <span class="quad-title">No arranques aquí</span>
+          Se usa poco: el esfuerzo no se recupera rápido.
+        </div>
+        <div class="cell drop-zone" data-zone="bad" ondrop="dropTask(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" contenteditable="false">
+          <span class="quad-title">Evítalo de inicio</span>
+          Poco frecuente y complejo: alto riesgo, bajo aprendizaje temprano.
+        </div>
+      </div>
+      <div class="matrix-feedback" id="matrixFeedback"></div>
+
+      <div class="callout" style="margin-top:26px;" contenteditable="false">
+        <strong>Regla práctica:</strong> el primer caso de uso de un coachee siempre sale del cuadrante "Empieza aquí" (alta frecuencia, baja complejidad). Ahí es donde una victoria pequeña construye la confianza para lo que sigue.
+      </div>
+
+      <h3 contenteditable="false">Segunda capa: ¿el coachee tiene lo que necesita para empezar hoy?</h3>
+      <p contenteditable="false">Ubicar la tarea en el cuadrante correcto es el primer filtro. Antes de comprometerse a un plan, revisa con tu coachee estas tres preguntas rápidas — si la respuesta a cualquiera es "no", probablemente no es la mejor tarea para <em>esta</em> sesión:</p>
+      <table class="brand-table">
+        <tbody><tr><th contenteditable="false">Pregunta</th><th contenteditable="false">Por qué importa</th></tr>
+        <tr><td contenteditable="false">¿Tiene acceso hoy mismo a la información que necesita (el correo, el Excel, el documento)?</td><td contenteditable="false">Si depende de pedirle acceso a alguien más, la sesión se detiene ahí.</td></tr>
+        <tr><td contenteditable="false">¿Puede probar el resultado él mismo antes de que termine la sesión?</td><td contenteditable="false">Ver un resultado real, aunque sea imperfecto, es lo que construye confianza.</td></tr>
+        <tr><td contenteditable="false">¿La tarea es suya, o depende de que otra persona cambie algo primero?</td><td contenteditable="false">Si depende de un tercero, el coachee no puede iterar solo entre sesiones.</td></tr>
+      </tbody></table>
+
+      <div class="quiz" data-quiz="q3a">
+        <span class="eyebrow" contenteditable="false">Checkpoint 1 de 2</span>
+        <div class="quiz-question" contenteditable="false">Un coachee identifica que su tarea de mayor frecuencia y menor complejidad depende de un reporte que le manda otra área una vez a la semana, y no siempre llega a tiempo. ¿Qué haces?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q3a" value="a"> Empiezas de todas formas, ya que cae en el cuadrante correcto de la matriz.</label>
+          <label contenteditable="false"><input type="radio" name="q3a" value="b"> Revisas si hay otra tarea en el mismo cuadrante que no dependa de un tercero, para la primera sesión.</label>
+          <label contenteditable="false"><input type="radio" name="q3a" value="c"> Escalas el problema del reporte tardío a un Experto.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q3a','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q3a"></div>
+      </div>
+
+      <h3 contenteditable="false">Qué hacer cuando no hay ninguna tarea en "Empieza aquí"</h3>
+      <p contenteditable="false">A veces el coachee genuinamente no identifica ninguna tarea de alta frecuencia y baja complejidad — pasa más seguido de lo que parece, sobre todo en roles muy especializados. En ese caso, no fuerces la matriz: ayúdalo a <em>descomponer</em> una tarea compleja en una parte pequeña que sí sea simple. Casi cualquier proceso complejo tiene un primer paso mecánico (juntar información, dar formato, resumir) que por sí solo ya es un buen primer caso de uso, aunque el proceso completo no lo sea todavía.</p>
+
+      <div class="quiz" data-quiz="q3b">
+        <span class="eyebrow" contenteditable="false">Checkpoint 2 de 2</span>
+        <div class="quiz-question" contenteditable="false">Tu coachee solo tiene una tarea en mente: un análisis financiero trimestral muy complejo. No hay nada más simple que le urja. ¿Qué haces?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q3b" value="a"> Le dices que no hay nada que hacer hasta el próximo trimestre.</label>
+          <label contenteditable="false"><input type="radio" name="q3b" value="b"> Lo ayudas a identificar un paso pequeño y mecánico dentro de ese análisis (por ejemplo, juntar y dar formato a las cifras) como primer caso de uso.</label>
+          <label contenteditable="false"><input type="radio" name="q3b" value="c"> Le armas tú el análisis completo para que vea el potencial.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q3b','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q3b"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn" onclick="goTo(2)">← Atrás</button>
+        <button class="btn primary" onclick="goTo(4)">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- PANEL 4 — HERRAMIENTAS -->
+    <section class="panel" data-panel="4">
+      <span class="eyebrow" contenteditable="false">Bloque 4 · ~20 min</span>
+      <h1 contenteditable="false">Copilot vs. Claude Teams</h1>
+      <p contenteditable="false">En UNACEM tus coachees tienen acceso a dos herramientas: <span class="chip">Copilot</span><span class="chip">Claude Teams</span>. Tu valor como coach no es "conocer" ambas a fondo, es saber cuál recomendar según el caso de uso, y saber cuándo la respuesta correcta es "prueba las dos y compara".</p>
+
+      <h3 contenteditable="false">Comparación por dimensión</h3>
+      <table class="brand-table">
+        <tbody><tr><th contenteditable="false"></th><th contenteditable="false">Copilot</th><th contenteditable="false">Claude Teams</th></tr>
+        <tr><td contenteditable="false"><strong>Se apoya en</strong></td><td contenteditable="false">Documentos y flujos que ya viven en Outlook, Word, Excel, Teams y SharePoint.</td><td contenteditable="false">Conocimiento persistente por proyecto (Projects) y análisis de documentos extensos.</td></tr>
+        <tr><td contenteditable="false"><strong>Úsala cuando</strong></td><td contenteditable="false">La tarea depende de un correo, una hoja de Excel o un archivo que ya está en el ecosistema Microsoft del coachee.</td><td contenteditable="false">La tarea requiere leer/analizar mucho material a la vez o sostener un proyecto de conocimiento en el tiempo.</td></tr>
+        <tr><td contenteditable="false"><strong>Fortaleza típica</strong></td><td contenteditable="false">Automatizar pasos dentro de un flujo que ya existe (resumir, redactar, dar formato dentro del mismo archivo).</td><td contenteditable="false">Razonamiento sobre documentos largos y consistencia a través de varias conversaciones sobre el mismo tema.</td></tr>
+        <tr><td contenteditable="false"><strong>Fricción típica</strong></td><td contenteditable="false">Si la información vive fuera del ecosistema Microsoft, hay que exportarla primero.</td><td contenteditable="false">Si el coachee no organiza bien su Project, pierde la ventaja de la memoria persistente.</td></tr>
+        <tr><td contenteditable="false"><strong>Ejemplo típico</strong></td><td contenteditable="false">Resumir un hilo de correos y redactar la respuesta en Outlook.</td><td contenteditable="false">Analizar un informe de 40 páginas y contestar preguntas de seguimiento sobre él.</td></tr>
+      </tbody></table>
+
+      <div class="callout" contenteditable="false">
+        <strong>Con Fernanda y Julio:</strong> Julio necesitaba resumir información de 3 correos de Outlook — Copilot ganó fácil, porque la información ya vivía ahí. Semanas después, cuando su jefe le pidió analizar el histórico de contratos de un proveedor (12 documentos PDF), Fernanda le sugirió probar un Project en Claude Teams en vez de intentarlo dentro de Word: la ventaja de mantener los 12 documentos como referencia persistente superaba la comodidad de quedarse en el ecosistema Microsoft.
+      </div>
+
+      <p contenteditable="false"><strong>Si no está claro cuál usar:</strong> sugiérele a tu coachee probar el mismo caso de uso chico en ambas y comparar el resultado. Es más rápido que decidir en teoría, y además refuerza su propio criterio — que es justo lo que buscas como coach.</p>
+
+      <h3 contenteditable="false">Ejercicio: ¿cuál recomendarías?</h3>
+      <p contenteditable="false">Piensa tu respuesta antes de revisar cada checkpoint.</p>
+
+      <div class="quiz" data-quiz="q4a">
+        <span class="eyebrow" contenteditable="false">Checkpoint 1 de 4</span>
+        <div class="quiz-question" contenteditable="false">Tu coachee quiere analizar un informe interno de 60 páginas y hacerle preguntas de seguimiento durante varios días. ¿Qué herramienta le recomiendas primero?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q4a" value="a"> Copilot, porque ya usa Word todos los días.</label>
+          <label contenteditable="false"><input type="radio" name="q4a" value="b"> Claude Teams, usando un Project para mantener el documento como referencia.</label>
+          <label contenteditable="false"><input type="radio" name="q4a" value="c"> Cualquiera da igual, no importa el caso de uso.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q4a','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q4a"></div>
+      </div>
+
+      <div class="quiz" data-quiz="q4b">
+        <span class="eyebrow" contenteditable="false">Checkpoint 2 de 4</span>
+        <div class="quiz-question" contenteditable="false">Tu coachee necesita resumir un hilo de correo de Outlook con 15 respuestas y redactar una contestación en 10 minutos. ¿Qué herramienta tiene más sentido?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q4b" value="a"> Copilot, porque ya vive dentro de Outlook y no requiere exportar nada.</label>
+          <label contenteditable="false"><input type="radio" name="q4b" value="b"> Claude Teams, porque siempre da mejores resúmenes.</label>
+          <label contenteditable="false"><input type="radio" name="q4b" value="c"> Ninguna, esto se hace más rápido manualmente.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q4b','a')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q4b"></div>
+      </div>
+
+      <div class="quiz" data-quiz="q4c">
+        <span class="eyebrow" contenteditable="false">Checkpoint 3 de 4</span>
+        <div class="quiz-question" contenteditable="false">Tu coachee no está seguro de si su caso de uso encaja mejor en Copilot o Claude Teams, y ya llevas 10 minutos discutiéndolo en teoría. ¿Qué le sugieres?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q4c" value="a"> Seguir discutiendo hasta llegar a una conclusión teórica.</label>
+          <label contenteditable="false"><input type="radio" name="q4c" value="b"> Probar el mismo caso chico en ambas herramientas y comparar el resultado.</label>
+          <label contenteditable="false"><input type="radio" name="q4c" value="c"> Escalar la decisión a un Experto.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q4c','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q4c"></div>
+      </div>
+
+      <h3 contenteditable="false">Reglas de datos — qué es seguro compartir</h3>
+      <p contenteditable="false">Antes de subir información a cualquiera de las dos herramientas, tu coachee debe evitar cargar datos personales de terceros, información financiera sensible o contratos confidenciales sin autorización. Usa esta pregunta rápida como filtro: <strong>"¿Me sentiría cómodo si esta información apareciera en una pantalla compartida frente a todo mi equipo?"</strong> Si la respuesta es no, no debería subirse sin anonimizar o generalizar primero.</p>
+
+      <table class="brand-table">
+        <tbody><tr><th contenteditable="false">Tipo de información</th><th contenteditable="false">Recomendación</th></tr>
+        <tr><td contenteditable="false">Datos personales de clientes o colaboradores (nombres, salarios, datos de contacto)</td><td contenteditable="false">Anonimizar o generalizar antes de usar cualquiera de las dos herramientas.</td></tr>
+        <tr><td contenteditable="false">Cifras financieras internas no públicas</td><td contenteditable="false">Evitar, salvo autorización explícita del área correspondiente.</td></tr>
+        <tr><td contenteditable="false">Contratos con cláusulas de confidencialidad</td><td contenteditable="false">Consultar con el equipo legal antes de subir cualquier fragmento.</td></tr>
+        <tr><td contenteditable="false">Procesos internos ya documentados públicamente, plantillas, formatos genéricos</td><td contenteditable="false">Generalmente seguro de usar como referencia.</td></tr>
+      </tbody></table>
+
+      <div class="callout warn" contenteditable="false">
+        <strong>Nota para el equipo del programa:</strong> estas reglas de datos deben confirmarse formalmente con Seguridad de la Información / TI de UNACEM antes de comunicarse como política oficial a los coachees. Este módulo las presenta como criterio de precaución razonable mientras esa validación se cierra.
+      </div>
+
+      <div class="quiz" data-quiz="q4d">
+        <span class="eyebrow" contenteditable="false">Checkpoint 4 de 4</span>
+        <div class="quiz-question" contenteditable="false">Tu coachee quiere subir una lista con nombres, salarios y RFC de su equipo a Claude Teams para "que le arme un análisis más rápido". ¿Qué haces?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q4d" value="a"> Lo dejas, porque Claude Teams es una herramienta corporativa autorizada.</label>
+          <label contenteditable="false"><input type="radio" name="q4d" value="b"> Le sugieres anonimizar los datos (quitar nombres y RFC, dejar solo cifras agregadas) antes de subir cualquier cosa.</label>
+          <label contenteditable="false"><input type="radio" name="q4d" value="c"> Lo escalas directo a Seguridad sin explicarle por qué.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q4d','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q4d"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn" onclick="goTo(3)">← Atrás</button>
+        <button class="btn primary" onclick="goTo(5)">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- PANEL 5 — RESISTENCIA Y ESCALADA -->
+    <section class="panel" data-panel="5">
+      <span class="eyebrow" contenteditable="false">Bloque 5 · ~20 min</span>
+      <h1 contenteditable="false">Resistencia y escalada</h1>
+      <p contenteditable="false">Dos situaciones se van a repetir en tus sesiones: un coachee que se resiste, y un momento en el que tú no sabes la respuesta. Ambas tienen protocolo — no dependen de tu improvisación ni de tu personalidad.</p>
+
+      <h3 contenteditable="false">Cuatro tipos de resistencia y cómo abordar cada uno</h3>
+      <p contenteditable="false">Casi nunca la resistencia es sobre la herramienta. Suele esconder una de estas cuatro preocupaciones:</p>
+      <table class="brand-table">
+        <tbody><tr><th contenteditable="false">Tipo</th><th contenteditable="false">Se ve así</th><th contenteditable="false">Cómo abordarlo</th></tr>
+        <tr><td contenteditable="false"><strong>Miedo a verse reemplazado</strong></td><td contenteditable="false">"Si la IA hace esto, ¿para qué me necesitan a mí?"</td><td contenteditable="false">Valida la preocupación abiertamente, luego muestra que la IA quita la parte mecánica, no el criterio que él aporta.</td></tr>
+        <tr><td contenteditable="false"><strong>Miedo a hacer el ridículo</strong></td><td contenteditable="false">Evita probar frente a ti, dice "mejor lo intento después yo solo".</td><td contenteditable="false">Empieza con un ejemplo de bajo riesgo y deja que el primer error ocurra en la sesión, contigo, no a solas.</td></tr>
+        <tr><td contenteditable="false"><strong>Percepción de pérdida de tiempo</strong></td><td contenteditable="false">"Ya sé hacer esto a mano, para qué aprender otra cosa."</td><td contenteditable="false">No discutas en abstracto — resuelve juntos un caso real suyo y deja que compare el tiempo con sus propios ojos.</td></tr>
+        <tr><td contenteditable="false"><strong>Desconfianza en la calidad del resultado</strong></td><td contenteditable="false">"¿Y si la IA se equivoca y nadie se da cuenta?"</td><td contenteditable="false">Es una preocupación legítima, no la minimices — refuerza que siempre se revisa el resultado, la IA no reemplaza el criterio de revisión.</td></tr>
+      </tbody></table>
+
+      <div class="callout" contenteditable="false">
+        <strong>Con Fernanda y Julio:</strong> en su primera sesión, Julio dijo casi en broma "espero que esto no me deje sin trabajo". Fernanda no lo dejó pasar como broma: le preguntó directamente qué le preocupaba, y Julio admitió que sí le inquietaba un poco. Hablarlo abiertamente, en vez de ignorarlo, fue lo que le permitió a Julio relajarse y probar de verdad en la sesión.
+      </div>
+
+      <div class="quiz" data-quiz="q5a">
+        <span class="eyebrow" contenteditable="false">Checkpoint 1 de 3</span>
+        <div class="quiz-question" contenteditable="false">Tu coachee dice, medio en broma: "ojalá esto no me deje sin trabajo". ¿Qué haces?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q5a" value="a"> Te ríes y sigues con la sesión, era solo una broma.</label>
+          <label contenteditable="false"><input type="radio" name="q5a" value="b"> Le preguntas directamente si de verdad le preocupa, y hablas del tema abiertamente antes de continuar.</label>
+          <label contenteditable="false"><input type="radio" name="q5a" value="c"> Le explicas con datos por qué la IA no va a reemplazar su puesto.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q5a','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q5a"></div>
+      </div>
+
+      <h3 contenteditable="false">Cuándo escalar a un Experto</h3>
+      <div class="card si" style="margin:16px 0;">
+        <ul>
+          <li contenteditable="false">Llevan más de 10-15 minutos atascados en algo técnico fuera de tu dominio.</li>
+          <li contenteditable="false">El caso de uso toca un tema de datos o gobierno que no tienes claro.</li>
+          <li contenteditable="false">El coachee necesita una funcionalidad de la herramienta que no dominas.</li>
+          <li contenteditable="false">La resistencia del coachee parece venir de algo más profundo que la sesión no puede resolver (por ejemplo, ansiedad real sobre su puesto) — ahí la escalada no es técnica, sino a su jefe directo o a Recursos Humanos, según corresponda.</li>
+        </ul>
+      </div>
+
+      <h3 contenteditable="false">Cómo escalar: la plantilla de tres preguntas</h3>
+      <p contenteditable="false">Cuando lleves un caso a un Experto, no repitas la sesión completa desde cero — llévale la respuesta a estas tres preguntas y la sesión de acompañamiento rinde el doble:</p>
+      <table class="brand-table">
+        <tbody><tr><th contenteditable="false">Pregunta</th><th contenteditable="false">Ejemplo</th></tr>
+        <tr><td contenteditable="false">¿Qué intentaron?</td><td contenteditable="false">"Probamos pedirle a Claude Teams que comparara los dos PDF directamente."</td></tr>
+        <tr><td contenteditable="false">¿Qué resultado obtuvieron?</td><td contenteditable="false">"Comparó solo las primeras páginas de cada uno, no el documento completo."</td></tr>
+        <tr><td contenteditable="false">¿Qué esperaban obtener?</td><td contenteditable="false">"Que marcara todas las diferencias entre los dos contratos completos."</td></tr>
+      </tbody></table>
+
+      <div class="quiz" data-quiz="q5b">
+        <span class="eyebrow" contenteditable="false">Checkpoint 2 de 3</span>
+        <div class="quiz-question" contenteditable="false">Llegas con un Experto a pedir ayuda y solo le dices "no me funcionó, ¿me ayudas?". ¿Qué le falta a tu escalada?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q5b" value="a"> Nada, el Experto va a saber qué preguntar.</label>
+          <label contenteditable="false"><input type="radio" name="q5b" value="b"> Le falta contexto: qué intentaron, qué resultado obtuvieron y qué esperaban obtener.</label>
+          <label contenteditable="false"><input type="radio" name="q5b" value="c"> Debiste resolverlo tú antes de escalar.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q5b','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q5b"></div>
+      </div>
+
+      <div class="callout" contenteditable="false">
+        <strong>No se espera que sepas todo.</strong> Tu valor como coach es guiar el proceso, no tener todas las respuestas técnicas. Las sesiones de acompañamiento con Expertos existen exactamente para esto — úsalas sin culpa.
+      </div>
+
+      <div class="quiz" data-quiz="q5c">
+        <span class="eyebrow" contenteditable="false">Checkpoint 3 de 3</span>
+        <div class="quiz-question" contenteditable="false">Tu coachee lleva 20 minutos atascado configurando un Project en Claude Teams — un tema que tú tampoco dominas del todo. ¿Qué es lo más razonable?</div>
+        <div class="quiz-options">
+          <label contenteditable="false"><input type="radio" name="q5c" value="a"> Seguir intentando entre los dos otros 20 minutos más.</label>
+          <label contenteditable="false"><input type="radio" name="q5c" value="b"> Escalar a un Experto con la plantilla de tres preguntas, y agendar seguimiento.</label>
+          <label contenteditable="false"><input type="radio" name="q5c" value="c"> Decirle que mejor no use Claude Teams.</label>
+        </div>
+        <button class="btn" onclick="checkQuiz('q5c','b')">Verificar respuesta</button>
+        <div class="quiz-feedback" id="fb-q5c"></div>
+      </div>
+
+      <div class="reflect">
+        <span class="eyebrow" contenteditable="false">Reflexión (se guarda en tu cuenta)</span>
+        <p style="margin-bottom:8px;" contenteditable="false">Piensa en un compañero real al que podrías acompañar como tu primer coachee. ¿Qué tipo de resistencia (de las cuatro de arriba) esperarías de su parte, y cómo la abordarías en la primera sesión?</p>
+        <textarea data-reflect="resistencia" placeholder="Escribe aquí tu respuesta..."></textarea>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn" onclick="goTo(4)">← Atrás</button>
+        <button class="btn primary" onclick="goTo(6)">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- PANEL 6 — CIERRE -->
+    <section class="panel" data-panel="6">
+      <span class="eyebrow" contenteditable="false">Cierre del módulo</span>
+      <h1 contenteditable="false">Listo para M10 y M11</h1>
+      <p contenteditable="false">Repasa rápido lo que cubriste:</p>
+      <ul class="checklist-final">
+        <li contenteditable="false">La diferencia entre usar IA y acompañar a alguien más a usarla.</li>
+        <li contenteditable="false">El marco M-R-O-C (GROW) para estructurar tus conversaciones de coaching.</li>
+        <li contenteditable="false">La matriz de frecuencia/complejidad para elegir el primer caso de uso.</li>
+        <li contenteditable="false">Cuándo recomendar Copilot o Claude Teams, y qué datos evitar compartir.</li>
+        <li contenteditable="false">Cómo manejar resistencia y cuándo escalar a un Experto.</li>
+      </ul>
+
+      <div class="callout" contenteditable="false">
+        <strong>Qué sigue:</strong> el Módulo 10 (tópicos intermedios) y el Módulo 11 (rol-play), donde practicas en vivo el proceso de coaching completo, con acompañamiento supervisado.
+      </div>
+
+      <div class="callout warn" contenteditable="false">
+        <strong>Antes:</strong>&nbsp;piensa en un compañero real que podrías usar como ejercicio de rol-play — te va a servir para practicar con un caso concreto en vez de uno hipotético.
+      </div>
+
+      <div class="complete-box">
+        <h3 contenteditable="false">Módulo completado</h3>
+        <p contenteditable="false">Nos vemos en la sesión en vivo.</p>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn" onclick="goTo(5)">← Atrás</button>
+        <span></span>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>Programa SALTO · Grupo UNACEM — Ruta del Champion · Módulo 9</footer>
+
+<script>
+var MODULE_SLUG = 'pedagogia-entornos-digitales';
+var totalSteps = 7;
+var currentStep = 0;
+var visited = {0: true};
+var persistReady = false;
+var saveTimer = null;
+
+function setSaveStatus(text) {
+  var el = document.getElementById('saveStatus');
+  if (el) el.textContent = text;
+}
+
+function collectState() {
+  var quizzes = {};
+  document.querySelectorAll('.quiz[data-quiz]').forEach(function (q) {
+    var name = q.getAttribute('data-quiz');
+    var selected = q.querySelector('input:checked');
+    if (name && selected) quizzes[name] = selected.value;
+  });
+  var matrix = {};
+  document.querySelectorAll('.drop-zone .task-chip[data-id]').forEach(function (chip) {
+    var zone = chip.parentElement && chip.parentElement.getAttribute('data-zone');
+    if (zone) matrix[chip.getAttribute('data-id')] = zone;
+  });
+  var reflexiones = {};
+  document.querySelectorAll('textarea[data-reflect]').forEach(function (t) {
+    reflexiones[t.getAttribute('data-reflect')] = t.value;
+  });
+  return {
+    current_step: currentStep,
+    visited: Object.keys(visited).map(function (k) { return parseInt(k, 10); }),
+    quizzes: quizzes,
+    matrix: matrix,
+    reflexiones: reflexiones
+  };
+}
+
+function scheduleSave() {
+  if (!persistReady) return;
+  clearTimeout(saveTimer);
+  setSaveStatus('Guardando…');
+  saveTimer = setTimeout(saveProgress, 700);
+}
+
+function saveProgress() {
+  fetch('/api/admin/proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      path: '/api/v1/modulos/' + MODULE_SLUG + '/progreso',
+      method: 'PUT',
+      body: collectState()
+    })
+  }).then(function (res) {
+    setSaveStatus(res.ok ? 'Progreso guardado' : 'No se pudo guardar');
+  }).catch(function () {
+    setSaveStatus('No se pudo guardar');
+  });
+}
+
+function applyProgress(data) {
+  if (!data) return;
+  (data.visited || []).forEach(function (step) {
+    visited[step] = true;
+  });
+  var quizzes = data.quizzes || {};
+  Object.keys(quizzes).forEach(function (name) {
+    var input = document.querySelector('input[name="' + name + '"][value="' + quizzes[name] + '"]');
+    if (input) input.checked = true;
+  });
+  var pool = document.getElementById('taskPool');
+  var matrix = data.matrix || {};
+  Object.keys(matrix).forEach(function (chipId) {
+    var chip = document.querySelector('.task-chip[data-id="' + chipId + '"]');
+    var zone = document.querySelector('.drop-zone[data-zone="' + matrix[chipId] + '"]');
+    if (chip && zone) zone.appendChild(chip);
+  });
+  var reflexiones = data.reflexiones || {};
+  Object.keys(reflexiones).forEach(function (key) {
+    var t = document.querySelector('textarea[data-reflect="' + key + '"]');
+    if (t) t.value = reflexiones[key];
+  });
+  var step = typeof data.current_step === 'number' ? data.current_step : 0;
+  goTo(step, true);
+}
+
+function loadProgress() {
+  fetch('/api/admin/proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      path: '/api/v1/modulos/' + MODULE_SLUG + '/progreso',
+      method: 'GET'
+    })
+  }).then(function (res) {
+    if (res.status === 401) {
+      window.location.href = '/admin/login?next=/aprendizaje/modulo-9';
+      return null;
+    }
+    return res.ok ? res.json() : null;
+  }).then(function (data) {
+    if (data) applyProgress(data);
+    persistReady = true;
+    setSaveStatus(data && data.updated_at ? 'Progreso restaurado' : 'Listo para guardar');
+  }).catch(function () {
+    persistReady = true;
+    setSaveStatus('Sin conexión al progreso');
+  });
+}
+
+function goTo(step, skipSave) {
+  document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+  document.querySelector('.panel[data-panel="' + step + '"]').classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function (item) {
+    item.classList.remove('active');
+    var s = parseInt(item.getAttribute('data-step'), 10);
+    if (s === step) item.classList.add('active');
+  });
+  visited[step] = true;
+  currentStep = step;
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: skipSave ? 'auto' : 'smooth' });
+  if (!skipSave) scheduleSave();
+}
+
+function updateProgress() {
+  var doneCount = Object.keys(visited).length;
+  document.querySelectorAll('.nav-item').forEach(function (item) {
+    var s = parseInt(item.getAttribute('data-step'), 10);
+    item.classList.remove('done');
+    if (visited[s] && s !== currentStep) item.classList.add('done');
+  });
+  document.getElementById('progressBar').style.width = Math.round((doneCount / totalSteps) * 100) + '%';
+}
+
+document.querySelectorAll('.nav-item').forEach(function (item) {
+  item.addEventListener('click', function () {
+    goTo(parseInt(item.getAttribute('data-step'), 10));
+  });
+});
+
+function checkQuiz(name, correctValue) {
+  var selected = document.querySelector('input[name="' + name + '"]:checked');
+  var fb = document.getElementById('fb-' + name);
+  if (!selected) {
+    fb.className = 'quiz-feedback show incorrect';
+    fb.innerHTML = 'Selecciona una opción antes de verificar.';
+    return;
+  }
+  if (selected.value === correctValue) {
+    fb.className = 'quiz-feedback show correct';
+    fb.innerHTML = '<strong>Correcto.</strong> Esa es la respuesta que mantiene al coachee construyendo su propio criterio.';
+  } else {
+    fb.className = 'quiz-feedback show incorrect';
+    fb.innerHTML = 'No es la mejor opción — vuelve a leer el bloque y ubica la respuesta que ayuda al coachee a construir su propio criterio, no a depender de ti.';
+  }
+  scheduleSave();
+}
+
+var draggedChip = null;
+document.querySelectorAll('.task-chip').forEach(function (chip) {
+  chip.addEventListener('dragstart', function (e) {
+    draggedChip = chip;
+    e.dataTransfer.setData('text/plain', chip.getAttribute('data-id') || '');
+  });
+});
+
+function allowDrop(e) { e.preventDefault(); e.currentTarget.classList.add('dragover'); }
+function dragLeave(e) { e.currentTarget.classList.remove('dragover'); }
+
+function dropTask(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  if (!draggedChip) return;
+  var zone = e.currentTarget.getAttribute('data-zone');
+  var answer = draggedChip.getAttribute('data-answer');
+  e.currentTarget.appendChild(draggedChip);
+  var fb = document.getElementById('matrixFeedback');
+  if (zone === answer) {
+    fb.className = 'matrix-feedback ok';
+    fb.innerHTML = '✓ Bien ubicada: "' + draggedChip.textContent.trim() + '"';
+  } else {
+    fb.className = 'matrix-feedback bad';
+    fb.innerHTML = 'Piénsalo de nuevo: ¿qué tan frecuente y qué tan compleja es "' + draggedChip.textContent.trim() + '"? Puedes arrastrarla a otro cuadrante.';
+  }
+  draggedChip = null;
+  scheduleSave();
+}
+
+function dropToPool(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  if (!draggedChip) return;
+  e.currentTarget.appendChild(draggedChip);
+  draggedChip = null;
+  document.getElementById('matrixFeedback').innerHTML = '';
+  scheduleSave();
+}
+
+document.querySelectorAll('textarea[data-reflect]').forEach(function (t) {
+  t.addEventListener('input', scheduleSave);
+});
+document.querySelectorAll('.quiz input[type="radio"]').forEach(function (input) {
+  input.addEventListener('change', scheduleSave);
+});
+
+updateProgress();
+loadProgress();
+</script>
+</body></html>

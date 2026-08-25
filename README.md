@@ -78,7 +78,7 @@ copy .env.example .env.local
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000). Panel: [http://localhost:3000/admin](http://localhost:3000/admin).
+Abre [http://localhost:3000](http://localhost:3000). Panel: [http://localhost:3000/admin](http://localhost:3000/admin). Módulo 9: [http://localhost:3000/aprendizaje/modulo-9](http://localhost:3000/aprendizaje/modulo-9).
 
 ## Roles
 
@@ -123,4 +123,4 @@ Público: `GET /api/v1/casos`, `GET /api/v1/casos/{slug}`, `GET /api/v1/champion
 
 Auth: `POST /api/v1/auth/register|login`, `GET /api/v1/auth/me`.
 
-Admin: CRUD `/api/v1/admin/casos`, publicar, `POST /api/v1/admin/assist`, usuarios (super_admin).
+Admin: CRUD `/api/v1/admin/casos`, publicar, `POST /api/v1/admin/assist`, usuarios (super_admin). Módulos: `GET /api/v1/modulos`, `GET/PUT /api/v1/modulos/{slug}/progreso`.
