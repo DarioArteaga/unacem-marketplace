@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { AprendizajePanel } from "@/components/AprendizajePanel";
 import { CasoCard } from "@/components/CasoCard";
 import { CompletadoBadge } from "@/components/CompletadoBadge";
 import { GroupCard } from "@/components/GroupCard";
-import { MetricasUsoDashboard } from "@/components/MetricasUsoDashboard";
 import { SelectFilter, TextFilter } from "@/components/TableColumnFilter";
 import { TagBadge } from "@/components/TagBadge";
 import type { CasoPublic } from "@/lib/api/types";
@@ -16,15 +14,13 @@ type CasoGridProps = {
   casos: CasoPublic[];
 };
 
-type TabKey = "area" | "coach" | "ola" | "lista" | "metricas" | "aprendizaje";
+type TabKey = "area" | "coach" | "ola" | "lista";
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "area", label: "Vista por área" },
   { key: "coach", label: "Vista por coach" },
   { key: "ola", label: "Vista por ola" },
   { key: "lista", label: "Vista por lista" },
-  { key: "metricas", label: "Métricas de uso" },
-  { key: "aprendizaje", label: "Aprendizaje" },
 ];
 
 type Group = {
@@ -99,7 +95,7 @@ export function CasoGrid({ casos }: CasoGridProps): React.ReactElement {
     [casos],
   );
 
-  const groupsByTab: Record<Exclude<TabKey, "lista" | "metricas" | "aprendizaje">, Group[]> = {
+  const groupsByTab: Record<Exclude<TabKey, "lista">, Group[]> = {
     area: areaGroups,
     coach: coachGroups,
     ola: olaGroups,
@@ -112,27 +108,9 @@ export function CasoGrid({ casos }: CasoGridProps): React.ReactElement {
 
   if (tab === "lista") {
     return (
-      <section aria-labelledby="casos-heading" className="space-y-6">
+      <section aria-labelledby="casos-heading" className="space-y-4">
         <Tabs active={tab} onChange={changeTab} />
         <ListaCasos casos={casos} />
-      </section>
-    );
-  }
-
-  if (tab === "metricas") {
-    return (
-      <section aria-labelledby="casos-heading" className="space-y-6">
-        <Tabs active={tab} onChange={changeTab} />
-        <MetricasUsoDashboard casos={casos} />
-      </section>
-    );
-  }
-
-  if (tab === "aprendizaje") {
-    return (
-      <section aria-labelledby="casos-heading" className="space-y-6">
-        <Tabs active={tab} onChange={changeTab} />
-        <AprendizajePanel />
       </section>
     );
   }
@@ -142,20 +120,20 @@ export function CasoGrid({ casos }: CasoGridProps): React.ReactElement {
   const showingCases = selectedKey !== null;
 
   return (
-    <section aria-labelledby="casos-heading" className="space-y-6">
+    <section aria-labelledby="casos-heading" className="space-y-4">
       <Tabs active={tab} onChange={changeTab} />
 
       <div>
-        <h2 id="casos-heading" className="font-serif text-2xl font-semibold text-brand">
+        <h2 id="casos-heading" className="font-serif text-xl font-semibold text-brand">
           {showingCases && activeGroup ? activeGroup.title : "Selecciona un grupo"}
         </h2>
-        <p className="mt-1 text-sm text-ink-muted">
+        <p className="mt-0.5 text-sm text-ink-muted">
           {showingCases && activeGroup ? activeGroup.subtitle : "Elige un grupo para ver sus casos."}
         </p>
       </div>
 
       {showingCases ? (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <button
             type="button"
             onClick={() => setSelectedKey(null)}
@@ -168,7 +146,7 @@ export function CasoGrid({ casos }: CasoGridProps): React.ReactElement {
               Este grupo no tiene casos publicados.
             </p>
           ) : (
-            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {activeGroup.casos.map((caso) => (
                 <li key={caso.slug}>
                   <CasoCard caso={caso} />
@@ -182,7 +160,7 @@ export function CasoGrid({ casos }: CasoGridProps): React.ReactElement {
           No hay casos publicados todavía.
         </p>
       ) : (
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {groups.map((group) => (
             <li key={group.key}>
               <GroupCard
@@ -209,8 +187,8 @@ function Tabs({
   return (
     <div
       role="tablist"
-      aria-label="Vistas del marketplace"
-      className="flex flex-wrap gap-2 border-b border-ink-muted/10 pb-3"
+      aria-label="Agrupar casos del marketplace"
+      className="flex flex-wrap gap-1.5 border-b border-ink-muted/10 pb-2"
     >
       {TABS.map((t) => (
         <button
@@ -219,7 +197,7 @@ function Tabs({
           role="tab"
           aria-selected={active === t.key}
           onClick={() => onChange(t.key)}
-          className={`rounded-full px-4 py-2 text-sm font-medium transition outline-none focus-visible:ring-2 focus-visible:ring-brand-accent ${
+          className={`rounded-full px-3 py-1.5 text-sm font-medium transition outline-none focus-visible:ring-2 focus-visible:ring-brand-accent ${
             active === t.key
               ? "bg-brand text-white"
               : "bg-surface text-ink-muted ring-1 ring-ink-muted/15 hover:text-ink"

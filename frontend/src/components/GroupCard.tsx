@@ -19,18 +19,18 @@ export function GroupCard({
     <button
       type="button"
       onClick={onSelect}
-      className="group flex h-full w-full flex-col rounded-2xl border border-ink-muted/15 bg-surface p-5 text-left shadow-sm outline-none transition duration-200 ease-out hover:-translate-y-1 hover:border-brand/50 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:border-brand focus-visible:shadow-lg focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-muted"
+      className="group flex w-full flex-col rounded-xl border border-ink-muted/15 bg-surface p-3.5 text-left shadow-sm outline-none transition duration-200 ease-out hover:border-brand/50 hover:shadow-md focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-muted"
     >
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <h3 className="font-serif text-xl font-semibold text-brand transition-colors group-hover:text-brand-accent group-focus-visible:text-brand-accent">
+      <div className="flex items-start justify-between gap-2">
+        <h3 className="min-w-0 font-serif text-base font-semibold leading-snug text-brand transition-colors group-hover:text-brand-accent group-focus-visible:text-brand-accent">
           {title}
         </h3>
-        <span className="shrink-0 rounded-full bg-brand px-2.5 py-1 text-xs font-medium text-white">
+        <span className="shrink-0 rounded-full bg-brand px-2 py-0.5 text-[11px] font-medium text-white">
           {caseCountLabel(caseCount)}
         </span>
       </div>
-      <p className="mb-4 flex-1 text-sm leading-relaxed text-ink-muted">{subtitle}</p>
-      <span className="text-sm font-medium text-brand transition group-hover:text-brand-accent">
+      <p className="mt-1.5 line-clamp-2 text-xs leading-snug text-ink-muted">{subtitle}</p>
+      <span className="mt-2 text-xs font-medium text-brand transition group-hover:text-brand-accent">
         Ver casos →
       </span>
     </button>

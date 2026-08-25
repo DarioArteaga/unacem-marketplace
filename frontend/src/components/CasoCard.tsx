@@ -52,35 +52,35 @@ export function CasoCard({ caso }: CasoCardProps): React.ReactElement {
       <a
         href={`/casos/${caso.slug}`}
         onClick={handleNavigate}
-        className={`flex h-full flex-col rounded-2xl border bg-surface p-5 shadow-sm outline-none transition duration-200 ease-out hover:-translate-y-1 hover:border-brand/50 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:border-brand focus-visible:shadow-lg focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-muted ${
+        className={`flex h-full flex-col rounded-xl border bg-surface p-3.5 shadow-sm outline-none transition duration-200 ease-out hover:border-brand/50 hover:shadow-md focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-muted ${
           completado ? "border-brand/40 ring-1 ring-brand/15" : "border-ink-muted/15"
         }`}
       >
-        <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
-          <h2 className="font-serif text-xl font-semibold text-brand transition-colors group-hover:text-brand-accent">
+        <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
+          <h2 className="font-serif text-base font-semibold leading-snug text-brand transition-colors group-hover:text-brand-accent">
             {caso.titulo}
           </h2>
-          <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
-            {completado ? <CompletadoBadge /> : null}
-            <span className="rounded-full bg-brand px-2.5 py-1 text-xs font-medium text-white">
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-1">
+            {completado ? <CompletadoBadge compact /> : null}
+            <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-medium text-white">
               {caso.avance_pct}% · {formatEtapaLabel(caso.etapa_actual)}
             </span>
           </div>
         </div>
-        <p className="mb-4 flex-1 text-sm leading-relaxed text-ink-muted">{caso.resumen}</p>
-        <p className="mb-3 text-sm text-ink">
+        <p className="mb-2 line-clamp-2 text-xs leading-snug text-ink-muted">{caso.resumen}</p>
+        <p className="mb-2 text-xs text-ink">
           <span className="font-medium">{caso.champion}</span>
           <span className="text-ink-muted"> · {caso.area}</span>
         </p>
-        <ul className="flex flex-wrap gap-2" aria-label="Etiquetas">
+        <ul className="flex flex-wrap gap-1" aria-label="Etiquetas">
           {caso.herramientas.slice(0, 2).map((tool) => (
             <li key={tool}>
-              <span className="rounded-md bg-surface-muted px-2 py-1 text-xs font-medium text-ink-muted">
+              <span className="rounded-md bg-surface-muted px-1.5 py-0.5 text-[11px] font-medium text-ink-muted">
                 {tool}
               </span>
             </li>
           ))}
-          {caso.tags.map((tag) => (
+          {caso.tags.slice(0, 3).map((tag) => (
             <li key={tag}>
               <TagBadge tag={tag} interactive />
             </li>

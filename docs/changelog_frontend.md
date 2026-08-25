@@ -1,7 +1,7 @@
 # Changelog Frontend
 
-- [2026-08-25] [FEAT] Home: tabs "Métricas de uso" (tablero de catálogo público: avance, etapa, coach, ola, casos al 100%) y "Aprendizaje" (acceso al Módulo 9).
-  Archivos modificados: frontend/src/components/CasoGrid.tsx, frontend/src/components/MetricasUsoDashboard.tsx, frontend/src/components/AprendizajePanel.tsx, docs/changelog_frontend.md
+- [2026-08-25] [FEAT] Métricas de uso y Aprendizaje salen de los tabs de la home: van al header (`/metricas`, `/aprendizaje`). Landing más densa: hero más bajo, grilla de 4 columnas, cards de grupo/caso compactas.
+  Archivos modificados: frontend/src/components/SiteHeader.tsx, frontend/src/components/SiteChrome.tsx, frontend/src/components/SiteFooter.tsx, frontend/src/components/CasoGrid.tsx, frontend/src/components/GroupCard.tsx, frontend/src/components/CasoCard.tsx, frontend/src/app/page.tsx, frontend/src/app/metricas/page.tsx, frontend/src/app/aprendizaje/page.tsx, docs/changelog_frontend.md
 
 - [2026-08-25] [FEAT] Módulo 9 asíncrono en `/aprendizaje/modulo-9` (HTML estático con persistencia de progreso vía BFF). Matriz drag-and-drop mueve chips a cuadrantes y permite reintentar. Enlace "Módulo 9" en el admin. Requiere sesión.
   Archivos modificados: frontend/public/aprendizaje/modulo-9.html, frontend/src/app/aprendizaje/layout.tsx, frontend/src/app/aprendizaje/modulo-9/page.tsx, frontend/src/app/admin/layout.tsx, frontend/src/components/SiteChrome.tsx, frontend/src/lib/api/types.ts, docs/changelog_frontend.md
