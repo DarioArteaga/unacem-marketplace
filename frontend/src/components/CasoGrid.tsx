@@ -281,12 +281,7 @@ function ListaCasos({ casos }: { casos: CasoPublic[] }): React.ReactElement {
           </button>
         </div>
       )}
-      {sorted.length === 0 ? (
-        <p className="rounded-xl bg-white px-4 py-8 text-center text-ink-muted ring-1 ring-ink-muted/10">
-          Ningún caso coincide con los filtros aplicados.
-        </p>
-      ) : (
-        <div className="overflow-x-auto rounded-2xl bg-surface ring-1 ring-ink-muted/10">
+      <div className="overflow-x-auto rounded-2xl bg-surface ring-1 ring-ink-muted/10">
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-ink-muted/10 text-xs tracking-wide text-ink-muted uppercase">
               <tr>
@@ -340,7 +335,14 @@ function ListaCasos({ casos }: { casos: CasoPublic[] }): React.ReactElement {
               </tr>
             </thead>
             <tbody>
-              {sorted.map((caso) => (
+              {sorted.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="px-4 py-8 text-center text-ink-muted">
+                    Ningún caso coincide con los filtros aplicados.
+                  </td>
+                </tr>
+              ) : (
+                sorted.map((caso) => (
                 <tr key={caso.slug} className="border-b border-ink-muted/5 last:border-0">
                   <td className="px-4 py-3 font-medium text-ink">
                     <Link
@@ -370,11 +372,11 @@ function ListaCasos({ casos }: { casos: CasoPublic[] }): React.ReactElement {
                     </div>
                   </td>
                 </tr>
-              ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
-      )}
     </div>
   );
 }

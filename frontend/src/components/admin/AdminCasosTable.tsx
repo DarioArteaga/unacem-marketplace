@@ -74,12 +74,7 @@ export function AdminCasosTable({ casos }: AdminCasosTableProps): React.ReactEle
         </div>
       )}
 
-      {filtered.length === 0 ? (
-        <p className="rounded-xl bg-surface px-4 py-8 text-center text-ink-muted ring-1 ring-ink-muted/10">
-          Ningún caso coincide con los filtros aplicados.
-        </p>
-      ) : (
-        <div className="overflow-x-auto rounded-2xl bg-surface ring-1 ring-ink-muted/10">
+      <div className="overflow-x-auto rounded-2xl bg-surface ring-1 ring-ink-muted/10">
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-ink-muted/10 text-xs tracking-wide text-ink-muted uppercase">
               <tr>
@@ -139,7 +134,14 @@ export function AdminCasosTable({ casos }: AdminCasosTableProps): React.ReactEle
               </tr>
             </thead>
             <tbody>
-              {filtered.map((caso) => (
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-8 text-center text-ink-muted">
+                    Ningún caso coincide con los filtros aplicados.
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((caso) => (
                 <tr key={caso.id} className="border-b border-ink-muted/5 last:border-0">
                   <td className="px-4 py-3 font-medium text-ink">
                     {caso.visible_publico ? (
@@ -178,11 +180,11 @@ export function AdminCasosTable({ casos }: AdminCasosTableProps): React.ReactEle
                     </Link>
                   </td>
                 </tr>
-              ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
-      )}
     </div>
   );
 }

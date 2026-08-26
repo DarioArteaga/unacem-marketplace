@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-08-26] [FIX] Vista lista (home y admin): si el filtro no trae coincidencias se mantiene la cabecera con los campos, para poder borrar el texto sin usar "Limpiar filtros".
+  Archivos modificados: frontend/src/components/CasoGrid.tsx, frontend/src/components/admin/AdminCasosTable.tsx, docs/changelog_frontend.md
+
 - [2026-08-25] [FEAT] Métricas de uso y Aprendizaje salen de los tabs de la home: van al header (`/metricas`, `/aprendizaje`). Landing más densa: hero más bajo, grilla de 4 columnas, cards de grupo/caso compactas.
   Archivos modificados: frontend/src/components/SiteHeader.tsx, frontend/src/components/SiteChrome.tsx, frontend/src/components/SiteFooter.tsx, frontend/src/components/CasoGrid.tsx, frontend/src/components/GroupCard.tsx, frontend/src/components/CasoCard.tsx, frontend/src/app/page.tsx, frontend/src/app/metricas/page.tsx, frontend/src/app/aprendizaje/page.tsx, docs/changelog_frontend.md
 
