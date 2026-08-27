@@ -1,5 +1,8 @@
 # Changelog Frontend
 
+- [2026-08-26] [FEAT] Sección `/metricas` pasa a embeber el dashboard HTML de métricas de éxito SALTO (KPIs, ruta del Champion, charts Chart.js, roster sin caso). Snapshot de Excel, no live del catálogo.
+  Archivos modificados: frontend/public/metricas/dashboard-exito.html, frontend/src/components/MetricasExitoEmbed.tsx, frontend/src/app/metricas/page.tsx, docs/architecture_decisions.md, docs/changelog_frontend.md
+
 - [2026-08-26] [FIX] Vista lista (home y admin): si el filtro no trae coincidencias se mantiene la cabecera con los campos, para poder borrar el texto sin usar "Limpiar filtros".
   Archivos modificados: frontend/src/components/CasoGrid.tsx, frontend/src/components/admin/AdminCasosTable.tsx, docs/changelog_frontend.md
 

@@ -48,6 +48,10 @@ Sí se persiste el **progreso por usuario autenticado**:
 
 API: `GET/PUT /api/v1/modulos/{slug}/progreso` (JWT). El HTML llama al BFF `/api/admin/proxy`. `completed_at` se sella la primera vez que el usuario visita el último paso.
 
+### Dashboard de métricas de éxito (2026-08-26)
+
+`/metricas` embebe el artefacto HTML estático `frontend/public/metricas/dashboard-exito.html` (Chart.js por CDN). Los números salen del corte Excel (Tabla de puntos / Métricas de Éxito), no del CRUD de casos. El tablero de catálogo público (`MetricasUsoDashboard`) queda en el código por si se reusa; la sección del header apunta a este dashboard.
+
 ### Auth y roles
 
 - Registro: email + password (hash argon2) → rol `viewer`.
