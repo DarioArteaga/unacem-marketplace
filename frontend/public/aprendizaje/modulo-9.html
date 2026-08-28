@@ -257,7 +257,7 @@ footer{text-align:center; padding:20px; font-size:11px; color:var(--gris-medio);
       <p style="font-size:16px;" contenteditable="false">Llegaste hasta acá porque ya construiste tu propio caso de uso con IA y te graduaste como Champion. Ahora empieza tu segunda ruta: la de ayudar a que <strong>otros</strong> construyan el suyo. Este módulo asíncrono te da las bases antes de tus dos sesiones en vivo — el Módulo 10 (tópicos intermedios) y el Módulo 11 (rol-play de coaching).</p>
 
       <div class="callout" contenteditable="false">
-        <strong>Cómo usar este material:</strong> los cinco bloques de contenido (1 a 5) están diseñados para tomarte unos 20 minutos cada uno — en total, calcula entre 1h45 y 2h15. No hace falta completarlo de una sola sentada: puedes dividirlo en 2 o 3 sesiones cortas usando el menú de la izquierda como guía. Tu progreso (sección actual, quizzes, matriz y reflexiones) se guarda en tu cuenta al avanzar. Cada bloque tiene varias actividades cortas — complétalas, porque de ahí sale la práctica que harás en vivo en M11.
+        <strong>Cómo usar este material:</strong> los cinco bloques de contenido (1 a 5) están diseñados para tomarte unos 20 minutos cada uno — en total, calcula entre 1h45 y 2h15. No hace falta completarlo de una sola sentada: puedes dividirlo en 2 o 3 sesiones cortas usando el menú de la izquierda como guía. Tu progreso (sección actual, quizzes, matriz y reflexiones) se guarda en tu cuenta si tienes sesión, o en este navegador si no. Cada bloque tiene varias actividades cortas — complétalas, porque de ahí sale la práctica que harás en vivo en M11.
       </div>
 
       <h3 style="font-size:16px; margin-top:30px;" contenteditable="false">Lo que vas a poder hacer al terminar</h3>
@@ -819,10 +819,12 @@ footer{text-align:center; padding:20px; font-size:11px; color:var(--gris-medio);
 
 <script>
 var MODULE_SLUG = 'pedagogia-entornos-digitales';
+var STORAGE_KEY = 'salto-modulo-' + MODULE_SLUG;
 var totalSteps = 7;
 var currentStep = 0;
 var visited = {0: true};
 var persistReady = false;
+var persistRemote = false;
 var saveTimer = null;
 
 function setSaveStatus(text) {
@@ -862,14 +864,37 @@ function scheduleSave() {
   saveTimer = setTimeout(saveProgress, 700);
 }
 
+function readLocalProgress() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function writeLocalProgress(state) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (err) {
+    /* ponytail: quota / private mode — el curso sigue usable sin persistir */
+  }
+}
+
 function saveProgress() {
+  var state = collectState();
+  writeLocalProgress(state);
+  if (!persistRemote) {
+    setSaveStatus('Guardado en este navegador');
+    return;
+  }
   fetch('/api/admin/proxy', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({
       path: '/api/v1/modulos/' + MODULE_SLUG + '/progreso',
       method: 'PUT',
-      body: collectState()
+      body: state
     })
   }).then(function (res) {
     setSaveStatus(res.ok ? 'Progreso guardado' : 'No se pudo guardar');
@@ -914,15 +939,25 @@ function loadProgress() {
     })
   }).then(function (res) {
     if (res.status === 401) {
-      window.location.href = '/admin/login?next=/aprendizaje/modulo-9';
-      return null;
+      persistRemote = false;
+      return readLocalProgress();
     }
-    return res.ok ? res.json() : null;
+    persistRemote = res.ok;
+    return res.ok ? res.json() : readLocalProgress();
   }).then(function (data) {
     if (data) applyProgress(data);
     persistReady = true;
-    setSaveStatus(data && data.updated_at ? 'Progreso restaurado' : 'Listo para guardar');
+    if (persistRemote && data && data.updated_at) {
+      setSaveStatus('Progreso restaurado');
+    } else if (!persistRemote) {
+      setSaveStatus(data ? 'Progreso de este navegador' : 'Público · se guarda en este navegador');
+    } else {
+      setSaveStatus('Listo para guardar');
+    }
   }).catch(function () {
+    persistRemote = false;
+    var local = readLocalProgress();
+    if (local) applyProgress(local);
     persistReady = true;
     setSaveStatus('Sin conexión al progreso');
   });

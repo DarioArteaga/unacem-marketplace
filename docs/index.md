@@ -7,4 +7,6 @@
 | [architecture_decisions.md](architecture_decisions.md) | Decisiones técnicas |
 | [schema.dbml](schema.dbml) | Esquema PostgreSQL (users, casos, módulos de aprendizaje y progreso) |
 
+Copia a clones Azure DevOps (API + UI): `scripts/sync-azure-repos.ps1`.
+
 Punto de entrada: [README.md](../README.md).

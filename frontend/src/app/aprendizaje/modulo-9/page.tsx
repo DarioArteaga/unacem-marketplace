@@ -1,12 +1,4 @@
-import { redirect } from "next/navigation";
-import { fetchMe } from "@/lib/api/serverAdmin";
-
-export default async function Modulo9Page(): Promise<React.ReactElement> {
-  const user = await fetchMe();
-  if (!user) {
-    redirect("/admin/login?next=/aprendizaje/modulo-9");
-  }
-
+export default function Modulo9Page(): React.ReactElement {
   return (
     <iframe
       src="/aprendizaje/modulo-9.html"

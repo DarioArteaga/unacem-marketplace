@@ -46,7 +46,7 @@ Sí se persiste el **progreso por usuario autenticado**:
 - `modulos_aprendizaje`: catálogo (slug, título, pasos). Seed inicial `pedagogia-entornos-digitales`.
 - `modulos_progreso`: un registro por `(user_id, modulo_slug)` con JSONB `visited`, `quizzes`, `matrix`, `reflexiones`. JSONB a propósito — el set de checkpoints/chips es propio de cada módulo y no justifica una tabla por pregunta.
 
-API: `GET/PUT /api/v1/modulos/{slug}/progreso` (JWT). El HTML llama al BFF `/api/admin/proxy`. `completed_at` se sella la primera vez que el usuario visita el último paso.
+La ruta `/aprendizaje/modulo-9` es pública (sin login). API de progreso: `GET/PUT /api/v1/modulos/{slug}/progreso` (JWT). El HTML llama al BFF; si no hay sesión no redirige: guarda en `localStorage`. `completed_at` se sella en API la primera vez que un usuario autenticado visita el último paso.
 
 ### Dashboard de métricas de éxito (2026-08-26)
 
@@ -65,6 +65,10 @@ Endpoint admin que envía texto libre a Anthropic (key solo en backend). Devuelv
 ### Lectura pública e ISR
 
 Next hace fetch a la API con revalidate; al publicar/editar el backend llama al webhook `/api/revalidate` del front.
+
+### Azure DevOps: dos repos, trabajo local en monorepo (2026-08-27)
+
+Innovación ya tiene `salto-usecase-marketplace-api` y `salto-usecase-marketplace-ui` (trámites IT). Un repo monorepo nuevo no se pide. Local se sigue en este árbol (`frontend/` + `backend/`). Hacia Azure se copia con `scripts/sync-azure-repos.ps1`: raíz del clone API = contenido de `backend/` (`app/`, no `src/`); raíz del clone UI = contenido de `frontend/`. README y `docs/decisions/` de la plantilla se conservan. Deploy sigue siendo tag-driven en Azure; Railway/Vercel no se tocan hasta que exista Flexible Server + App Services.
 
 ### Paleta de color (placeholder)
 

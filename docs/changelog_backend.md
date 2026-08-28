@@ -1,5 +1,8 @@
 # Changelog Backend
 
+- [2026-08-27] [FEAT] Script PowerShell `scripts/sync-azure-repos.ps1` para copiar `backend/` (y `docs/` en `docs/codigo`) al clone `salto-usecase-marketplace-api` sin secretos ni `.venv`; conserva README y ADRs de Azure. No hace git push.
+  Archivos modificados: scripts/sync-azure-repos.ps1, docs/architecture_decisions.md, docs/changelog_backend.md
+
 - [2026-08-25] [FEAT] Módulos de aprendizaje: tablas `modulos_aprendizaje` y `modulos_progreso` (JSONB de visited/quizzes/matrix/reflexiones), migración Alembic `004` con seed del Módulo 9. API autenticada `GET/PUT /api/v1/modulos/{slug}/progreso`.
   Archivos modificados: backend/app/models/modulo.py, backend/app/models/user.py, backend/app/models/__init__.py, backend/app/schemas/modulo.py, backend/app/services/modulos.py, backend/app/api/v1/modulos.py, backend/app/api/v1/__init__.py, backend/alembic/versions/004_modulos_aprendizaje.py, backend/alembic/env.py, docs/schema.dbml, docs/architecture_decisions.md, docs/index.md, docs/changelog_backend.md
 

@@ -1,5 +1,11 @@
 # Changelog Frontend
 
+- [2026-08-28] [FIX] Módulo 9 público: se quita el redirect a `/admin/login` en la página y en el HTML (401 ya no manda a login). Progreso en cuenta si hay sesión; si no, `localStorage`.
+  Archivos modificados: frontend/src/app/aprendizaje/modulo-9/page.tsx, frontend/public/aprendizaje/modulo-9.html, frontend/src/components/AprendizajePanel.tsx, docs/architecture_decisions.md, docs/changelog_frontend.md
+
+- [2026-08-27] [FEAT] El mismo `scripts/sync-azure-repos.ps1` copia `frontend/` al clone `salto-usecase-marketplace-ui` (excluye `node_modules`/`.next`/`.env`) y deja el README de plataforma.
+  Archivos modificados: scripts/sync-azure-repos.ps1, docs/changelog_frontend.md
+
 - [2026-08-26] [FEAT] Sección `/metricas` pasa a embeber el dashboard HTML de métricas de éxito SALTO (KPIs, ruta del Champion, charts Chart.js, roster sin caso). Snapshot de Excel, no live del catálogo.
   Archivos modificados: frontend/public/metricas/dashboard-exito.html, frontend/src/components/MetricasExitoEmbed.tsx, frontend/src/app/metricas/page.tsx, docs/architecture_decisions.md, docs/changelog_frontend.md
 

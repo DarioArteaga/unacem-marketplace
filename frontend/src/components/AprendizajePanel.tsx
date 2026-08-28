@@ -8,7 +8,8 @@ export function AprendizajePanel(): React.ReactElement {
           Aprendizaje · Ruta del Champion
         </h2>
         <p className="mt-1 text-sm text-ink-muted">
-          Material asíncrono para champions que pasan a acompañar a otros. Requiere iniciar sesión.
+          Material asíncrono para champions que pasan a acompañar a otros. El módulo es público; el progreso en
+          cuenta es opcional (si hay sesión).
         </p>
       </div>
 
@@ -18,7 +19,7 @@ export function AprendizajePanel(): React.ReactElement {
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-muted">
           Bases antes de las sesiones en vivo (M10 y M11): pasar de usar IA a acompañar a un coachee, marco M-R-O-C,
           qué tarea atacar primero, Copilot vs Claude Teams, resistencia y escalada. El progreso (bloques, quizzes,
-          matriz y reflexiones) se guarda en tu cuenta.
+          matriz y reflexiones) se guarda en tu cuenta si inicias sesión, o en este navegador si entras sin login.
         </p>
         <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-ink">
           <li>De usuario a coach</li>
